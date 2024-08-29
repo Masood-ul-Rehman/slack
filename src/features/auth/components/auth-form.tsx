@@ -13,7 +13,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "./ui/card";
+} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -21,13 +21,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./ui/form";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import GithubIco from "./icons/github";
-import GoogleIco from "./icons/google";
-import { PasswordInput } from "./ui/password-input";
-import { authFormSchema } from "@/types/auth";
+} from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import GithubIco from "@/components/icons/github";
+import GoogleIco from "@/components/icons/google";
+import { PasswordInput } from "@/components/ui/password-input";
+import { authFormSchema } from "@/features/types";
 
 interface AuthFormProps {
   type: "signUp" | "signIn";
@@ -135,6 +135,26 @@ const AuthForm = ({ type }: AuthFormProps) => {
               <div className="text-red-500 text-center text-sm flex gap-2 items-center justify-center ">
                 <Warning /> {error}
               </div>
+            )}
+            {type == "signUp" && (
+              <FormField
+                disabled={pending}
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter you full name"
+                        {...field}
+                        required
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             )}
             <FormField
               disabled={pending}

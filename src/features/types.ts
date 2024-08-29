@@ -6,4 +6,5 @@ export const authFormSchema = z.object({
   password: z.string().min(8, {
     message: "Password must be 8 characters or more",
   }),
+  name: z.string().optional(),
 });
