@@ -8,3 +8,6 @@ export const authFormSchema = z.object({
   }),
   name: z.string().optional(),
 });
+export interface AuthFormProps {
+  type: "signUp" | "signIn";
+}

@@ -27,11 +27,7 @@ import { Input } from "@/components/ui/input";
 import GithubIco from "@/components/icons/github";
 import GoogleIco from "@/components/icons/google";
 import { PasswordInput } from "@/components/ui/password-input";
-import { authFormSchema } from "@/features/types";
-
-interface AuthFormProps {
-  type: "signUp" | "signIn";
-}
+import { AuthFormProps, authFormSchema } from "@/features/auth/types";
 
 const AuthForm = ({ type }: AuthFormProps) => {
   const { signIn } = useAuthActions();
