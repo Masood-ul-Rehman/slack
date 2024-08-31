@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -16,15 +16,35 @@ import { Form, FormField, FormMessage } from "@/components/ui/form";
 import { useCreateWorkspaceModal } from "../store/use-create-workspace-modal";
 import { createWorkspaceSchema } from "../types";
 import { useCreateWorkspace } from "../api/use-create-workspaces";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const CreateWorkSpaceModel = () => {
+  const router = useRouter();
   const [open, setOpen] = useCreateWorkspaceModal();
-  const { mutate, isPending, isError, isSuccess } = useCreateWorkspace();
+  const {
+    mutate,
+    isPending,
+    isError,
+    isSuccess,
+    data: workspace,
+  } = useCreateWorkspace();
   const form = useForm<z.infer<typeof createWorkspaceSchema>>({
     resolver: zodResolver(createWorkspaceSchema),
   });
+  const closeModal = () => {
+    setOpen(false);
+    form.setValue("name", "");
+  };
   const handleSubmit = (data: z.infer<typeof createWorkspaceSchema>) => {
     mutate(data);
+    if (isSuccess) {
+      console.log(data, "this is data");
+      router.push(`/workspace/${workspace?._id}`);
+      closeModal();
+    } else if (isError) {
+      toast.error("Error creating workspace");
+    }
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>

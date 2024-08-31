@@ -28,6 +28,7 @@ import GithubIco from "@/components/icons/github";
 import GoogleIco from "@/components/icons/google";
 import { PasswordInput } from "@/components/ui/password-input";
 import { AuthFormProps, authFormSchema } from "@/features/auth/types";
+import { useGetWorkspaces } from "@/features/workspaces/api/use-get-workspaces";
 
 const AuthForm = ({ type }: AuthFormProps) => {
   const { signIn } = useAuthActions();
@@ -43,10 +44,18 @@ const AuthForm = ({ type }: AuthFormProps) => {
   });
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
-
+  const [enabled, setEnabled] = useState(false);
+  const { data, isLoading } = useGetWorkspaces();
   const handleProviderSignin = (value: "github" | "google") => {
     setPending(true);
-    signIn(value).finally(() => setPending(false));
+    signIn(value).finally(() => {
+      setEnabled(true);
+      if (isLoading) setPending(true);
+      if (!isLoading) {
+        setEnabled(false);
+        console.log(data, "this is data");
+      }
+    });
   };
 
   const onPasswordSignin = async (values: z.infer<typeof authFormSchema>) => {

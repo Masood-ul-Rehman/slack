@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
+import { Toaster } from "sonner";
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
+
 import { ConvexClientProvider } from "@/components/convex-provider";
 import Models from "@/components/models";
 
@@ -26,6 +28,7 @@ export default function RootLayout({
           <ConvexClientProvider>
             <Models />
             {children}
+            <Toaster />
           </ConvexClientProvider>
         </body>
       </html>
