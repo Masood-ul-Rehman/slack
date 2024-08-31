@@ -29,8 +29,10 @@ import GoogleIco from "@/components/icons/google";
 import { PasswordInput } from "@/components/ui/password-input";
 import { AuthFormProps, authFormSchema } from "@/features/auth/types";
 import { useGetWorkspaces } from "@/features/workspaces/api/use-get-workspaces";
+import { useRouter } from "next/navigation";
 
 const AuthForm = ({ type }: AuthFormProps) => {
+  const router = useRouter();
   const { signIn } = useAuthActions();
   const form = useForm<z.infer<typeof authFormSchema>>({
     resolver: zodResolver(authFormSchema),
@@ -44,17 +46,10 @@ const AuthForm = ({ type }: AuthFormProps) => {
   });
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
-  const [enabled, setEnabled] = useState(false);
-  const { data, isLoading } = useGetWorkspaces();
   const handleProviderSignin = (value: "github" | "google") => {
     setPending(true);
     signIn(value).finally(() => {
-      setEnabled(true);
-      if (isLoading) setPending(true);
-      if (!isLoading) {
-        setEnabled(false);
-        console.log(data, "this is data");
-      }
+      router.replace("/get-started");
     });
   };
 
@@ -66,7 +61,10 @@ const AuthForm = ({ type }: AuthFormProps) => {
           ? setError("Email or password is incorrect")
           : setError("Unknown error occurred");
       })
-      .finally(() => setPending(false));
+      .finally(() => {
+        router.replace("/get-started");
+        setPending(false);
+      });
   };
 
   useEffect(() => {
