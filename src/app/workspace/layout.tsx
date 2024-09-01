@@ -6,7 +6,7 @@ import Searchbar from "./components/searchbar";
 import { useRouter } from "next/navigation";
 import { useGetSession } from "@/features/users/api/use-get-session";
 
-const layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const { data, isLoading } = useGetSession();
 
@@ -28,4 +28,4 @@ const layout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default layout;
+export default Layout;
