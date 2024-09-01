@@ -10,14 +10,7 @@ const isProtectedRoute = createRouteMatcher(["/get-started", "/workspace"]);
 
 export default convexAuthNextjsMiddleware((request) => {
   if (isSignInPage(request) && isAuthenticatedNextjs()) {
-    if (localStorage.getItem("workspaceId")) {
-      return nextjsMiddlewareRedirect(
-        request,
-        `/workspace/${localStorage.getItem("workspaceId")}`
-      );
-    } else {
-      return nextjsMiddlewareRedirect(request, "/get-started");
-    }
+    return nextjsMiddlewareRedirect(request, "/get-started");
   }
   if (isProtectedRoute(request) && !isAuthenticatedNextjs()) {
     return nextjsMiddlewareRedirect(request, "/auth/signin");

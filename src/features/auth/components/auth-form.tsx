@@ -30,6 +30,7 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { AuthFormProps, authFormSchema } from "@/features/auth/types";
 import { useGetWorkspaces } from "@/features/workspaces/api/use-get-workspaces";
 import { useRouter } from "next/navigation";
+import { redirectToWorkspace } from "@/lib/utils";
 
 const AuthForm = ({ type }: AuthFormProps) => {
   const router = useRouter();
@@ -37,6 +38,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
   const form = useForm<z.infer<typeof authFormSchema>>({
     resolver: zodResolver(authFormSchema),
   });
+  const { data, isLoading } = useGetWorkspaces();
   const [text, setText] = useState({
     title: "",
     description: "",
@@ -46,10 +48,11 @@ const AuthForm = ({ type }: AuthFormProps) => {
   });
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
+
   const handleProviderSignin = (value: "github" | "google") => {
     setPending(true);
     signIn(value).finally(() => {
-      router.replace("/get-started");
+      redirectToWorkspace(router, type, data);
     });
   };
 
@@ -62,7 +65,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
           : setError("Unknown error occurred");
       })
       .finally(() => {
-        router.replace("/get-started");
+        redirectToWorkspace(router, type, data);
         setPending(false);
       });
   };

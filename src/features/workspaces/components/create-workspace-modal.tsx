@@ -32,16 +32,16 @@ const CreateWorkSpaceModel = () => {
   const form = useForm<z.infer<typeof createWorkspaceSchema>>({
     resolver: zodResolver(createWorkspaceSchema),
   });
-  const closeModal = () => {
-    setOpen(false);
-    form.setValue("name", "");
-  };
+
   const handleSubmit = (data: z.infer<typeof createWorkspaceSchema>) => {
     mutate(data);
     if (isSuccess) {
-      console.log(data, "this is data");
-      router.push(`/workspace/${workspace?._id}`);
-      closeModal();
+      setOpen(false);
+      if (workspace?.result) {
+        toast.success("Workspace created successfully");
+        localStorage.setItem("workspaceId", workspace.result.workspaceId);
+        router.push(`/workspace/${workspace.result.workspaceId}`);
+      }
     } else if (isError) {
       toast.error("Error creating workspace");
     }

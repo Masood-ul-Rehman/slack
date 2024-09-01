@@ -17,18 +17,20 @@ const UserButton = () => {
   const { data, isLoading } = useCurrentUser();
   const { signOut } = useAuthActions();
 
-  if (isLoading) {
-    return <Loader className="size-4 animate-spin text-muted-foreground" />;
-  }
-  const { name, email, image } = data ?? {};
+  const { name, email, image } = data?.result ?? {};
   const Fallback = name?.charAt(0).toUpperCase();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-12 w-12 rounded-full">
-          <Avatar className="h-12 w-12">
-            <AvatarImage src={image} alt={name} />
-            <AvatarFallback>{Fallback}</AvatarFallback>
+        <Button variant="ghost" className="relative h-12 w-12 rounded-lg ">
+          <Avatar className="h-12 w-12 rounded-lg">
+            {!isLoading && image ? (
+              <AvatarImage src={image} alt={name} />
+            ) : (
+              <AvatarFallback className="h-12 w-12 rounded-lg text-black text-xl">
+                {Fallback}
+              </AvatarFallback>
+            )}
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
