@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useAuthActions } from "@convex-dev/auth/react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -12,42 +11,39 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { useGetWorkspaceById } from "@/features/workspaces/api/use-get-workspace-by-id";
 import { usePathname, useRouter } from "next/navigation";
-import { captializeFirstLetter } from "@/lib/utils";
+import { captializeFirstLetter, generateWorkspaceId } from "@/lib/utils";
 import { useGetWorkspaces } from "@/features/workspaces/api/use-get-workspaces";
 import { Workspace } from "@/features/workspaces/types";
 import { Loader } from "lucide-react";
 import { Plus } from "@phosphor-icons/react";
 import { useCreateWorkspaceModal } from "@/features/workspaces/store/use-create-workspace-modal";
+import { useGetWorkspaceById } from "@/features/workspaces/api/use-get-workspace-by-id";
 
 const UserWorkspaces = () => {
   const router = useRouter();
-  const [open, setOpen] = useCreateWorkspaceModal();
   const path = usePathname();
   let id = path.split("/")[2];
-  const { data, isLoading } = useGetWorkspaces();
-  const [workspace, setWorkspace] = useState<Workspace | null>(null);
-  useEffect(() => {
-    if (isLoading) return;
-    if (data && data?.result?.length > 0) {
-      const currWorkspace = data.result.find(
-        (workspace: any) => workspace.workspaceId == id
-      );
-      setWorkspace(currWorkspace as Workspace);
-    }
-  }, [data, router]);
+  const [_open, setOpen] = useCreateWorkspaceModal();
+  const { data: workspace, isLoading: workspaceLoading } = useGetWorkspaceById({
+    id,
+  });
+  const { data: workspaces, isLoading: workspacesLoading } = useGetWorkspaces();
+  const filteredWorkspaces = workspaces?.result.filter(
+    (spaces) => spaces.workspaceId !== workspace?.result?.workspaceId
+  );
+  const { image, name } = workspace?.result || {};
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-lg ">
           <Avatar className="h-10 w-10 rounded-lg">
-            {workspace?.image ? (
-              <AvatarImage src={workspace?.image} alt={workspace?.name} />
+            {image ? (
+              <AvatarImage src={image} alt={name} />
             ) : (
               <AvatarFallback className="bg-gray-400 text-black h-10 w-10 rounded-lg">
-                {workspace?.name?.charAt(0).toUpperCase() || "S"}
+                {name?.charAt(0).toUpperCase() || "S"}
               </AvatarFallback>
             )}
           </Avatar>
@@ -61,50 +57,46 @@ const UserWorkspaces = () => {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">
-              {captializeFirstLetter(workspace?.name || "slack")}
+              {captializeFirstLetter(name || "slack")}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
-              {workspace?.name?.split(" ").join("-") + "-talk.slack.com"}
+              {name?.split(" ").join("-") + "-talk.slack.com"}
             </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
 
-        {isLoading ? (
+        {workspaceLoading ? (
           <div className="flex items-center justify-center">
             <Loader className="size-4 animate-spin text-muted-foreground" />
           </div>
         ) : (
-          data &&
-          data?.result.length > 0 &&
-          data?.result?.map((allSpa: Workspace, index) => (
+          filteredWorkspaces?.map((space: Workspace, index) => (
             <div
               key={index}
               className="flex flex-col gap-2  px-1 py-1 text-sm cursor-pointer "
-              onClick={() => router.push(`/workspace/${allSpa.workspaceId}`)}
+              onClick={() => router.push(`/workspace/${space.workspaceId}`)}
             >
-              {allSpa.workspaceId !== workspace?.workspaceId && (
-                <DropdownMenuItem
-                  key={allSpa._id}
-                  className="flex items-center gap-3 "
-                >
-                  <Avatar className="h-10 w-10 rounded-lg">
-                    {allSpa?.image ? (
-                      <AvatarImage src={allSpa?.image} alt={allSpa?.name} />
-                    ) : (
-                      <AvatarFallback className="bg-gray-100 text-black h-10 w-10 rounded-lg">
-                        {allSpa?.name?.charAt(0).toUpperCase() || "S"}
-                      </AvatarFallback>
-                    )}
-                  </Avatar>
-                  <div>
-                    <h4>{captializeFirstLetter(allSpa?.name || "slack")}</h4>
-                    <p className="text-xs leading-none text-muted-foreground">
-                      {allSpa?.name?.split(" ").join("-") + "-talk.slack.com"}
-                    </p>
-                  </div>
-                </DropdownMenuItem>
-              )}
+              <DropdownMenuItem
+                key={space._id}
+                className="flex items-center gap-3 "
+              >
+                <Avatar className="h-10 w-10 rounded-lg">
+                  {space?.image ? (
+                    <AvatarImage src={space?.image} alt={space?.name} />
+                  ) : (
+                    <AvatarFallback className="bg-gray-100 text-black h-10 w-10 rounded-lg">
+                      {space?.name?.charAt(0).toUpperCase() || "S"}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                <div>
+                  <h4>{captializeFirstLetter(space?.name || "slack")}</h4>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {space?.name?.split(" ").join("-") + "-talk.slack.com"}
+                  </p>
+                </div>
+              </DropdownMenuItem>
             </div>
           ))
         )}

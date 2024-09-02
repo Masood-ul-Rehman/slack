@@ -1,19 +1,23 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
 import { Button } from "./ui/button";
 import logo from "@/app/assets/logo.png";
 import { useCurrentUser } from "@/features/auth/api/use-current-user";
-import { useGetWorkspaces } from "@/features/workspaces/api/use-get-workspaces";
 
 const Header = () => {
   const { data, isLoading } = useCurrentUser();
-  const [workspaceId, setWorkspaceId] = useState<string | null>(
-    localStorage.getItem("workspaceId")
-  );
+  const [workspaceId, setWorkspaceId] = useState<string | null>(null);
+  useEffect(() => {
+    const storedWorkspaceId = localStorage.getItem("workspaceId");
+    if (storedWorkspaceId) {
+      setWorkspaceId(storedWorkspaceId);
+    }
+  }, []);
+
   return (
     <div className=" container flex justify-between items-center py-12">
       <Image src={logo} alt="Logo" width={150} height={150} />

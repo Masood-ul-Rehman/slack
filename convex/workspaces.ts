@@ -48,7 +48,8 @@ export const getById = query({
       .filter((q) => q.eq(q.field("userId"), userId))
       .filter((q) => q.eq(q.field("workspaceId"), args.id))
       .first();
-
+    if (workspace == null)
+      return { success: false, result: null, error: "Workspace not found" };
     return { success: true, result: workspace, error: "" };
   },
 });

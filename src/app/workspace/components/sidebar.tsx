@@ -30,7 +30,7 @@ const Sidebar = () => {
       else if (currentpath[3] == "later") setSelected("later");
       else if (currentpath[3] == "more") setSelected("more");
     }
-  }, [pathname]);
+  }, [pathname, currentpath]);
   return (
     <div className="bg-slack_dark_bg w-[80px] text-white h-[calc(100vh-36px)] py-6 px-2 flex flex-col justify-between items-center">
       <div className="flex flex-col  gap-4">
