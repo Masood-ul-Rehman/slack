@@ -32,7 +32,7 @@ const Sidebar = () => {
     }
   }, [pathname, currentpath]);
   return (
-    <div className="bg-slack_dark_bg w-[80px] text-white h-[calc(100vh-36px)] py-6 px-2 flex flex-col justify-between items-center">
+    <div className="bg-slack_dark_bg w-[80px] text-white h-[calc(100vh-47px)]  py-6 px-2 flex flex-col justify-between items-center ">
       <div className="flex flex-col  gap-4">
         <UserWorkspaces />
         <Link

@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { usePathname, useRouter } from "next/navigation";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import WorkspaceAvatar from "@/components/workspace-avater";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,12 +13,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { usePathname, useRouter } from "next/navigation";
-import { captializeFirstLetter, generateWorkspaceId } from "@/lib/utils";
+import { Plus } from "@phosphor-icons/react";
+import { Loader } from "lucide-react";
+import { captializeFirstLetter } from "@/lib/utils";
+
 import { useGetWorkspaces } from "@/features/workspaces/api/use-get-workspaces";
 import { Workspace } from "@/features/workspaces/types";
-import { Loader } from "lucide-react";
-import { Plus } from "@phosphor-icons/react";
 import { useCreateWorkspaceModal } from "@/features/workspaces/store/use-create-workspace-modal";
 import { useGetWorkspaceById } from "@/features/workspaces/api/use-get-workspace-by-id";
 
@@ -38,15 +40,7 @@ const UserWorkspaces = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-lg ">
-          <Avatar className="h-10 w-10 rounded-lg">
-            {image ? (
-              <AvatarImage src={image} alt={name} />
-            ) : (
-              <AvatarFallback className="bg-gray-400 text-black h-10 w-10 rounded-lg">
-                {name?.charAt(0).toUpperCase() || "S"}
-              </AvatarFallback>
-            )}
-          </Avatar>
+          <WorkspaceAvatar img={image} name={name} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent

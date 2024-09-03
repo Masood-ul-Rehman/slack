@@ -36,5 +36,5 @@ export const redirectToWorkspace = (
   } else router.replace("/get-started");
 };
 export const captializeFirstLetter = (string: string) => {
-  return string.charAt(0).toUpperCase() + string?.slice(1);
+  return string?.charAt(0).toUpperCase() + string?.slice(1);
 };

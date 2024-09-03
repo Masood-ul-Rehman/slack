@@ -9,7 +9,6 @@ export const createWorkspaceSchema = z.object({
 export interface Workspace {
   _id: Id<"workspaces">;
   _creationTime: number;
-
   workspaceId: string;
   name: string;
   userId: string;
