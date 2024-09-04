@@ -3,7 +3,7 @@ import { useGetWorkspaceById } from "@/features/workspaces/api/use-get-workspace
 import { Info } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
-import UseGetWorkspaceId from "@/features/hooks/use-workspace-Id";
+import UseGetWorkspaceId from "@/features/workspaces/hooks/use-workspace-Id";
 
 const Searchbar = () => {
   const { workspaceId } = UseGetWorkspaceId();

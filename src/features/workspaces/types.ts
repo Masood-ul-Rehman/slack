@@ -15,5 +15,4 @@ export interface Workspace {
   userId: string;
   joinCode: string;
   image?: string | undefined;
-  members: string[];
 }

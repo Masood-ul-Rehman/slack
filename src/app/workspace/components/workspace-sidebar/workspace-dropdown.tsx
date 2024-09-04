@@ -20,11 +20,7 @@ const WorkspaceDropdown = ({ workspace }: { workspace: Workspace }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center justify-center  cursor-pointer">
-        <Button
-          variant="transparent"
-          size={"sm"}
-          className="text-white h-[49px] "
-        >
+        <Button variant="transparent" size={"sm"} className="text-white  px-2">
           <h4 className="text-xl font-bold truncate">
             {captializeFirstLetter(workspace?.name)}
           </h4>

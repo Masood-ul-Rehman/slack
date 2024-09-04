@@ -11,7 +11,7 @@ import {
 import Sidebar from "./components/sidebar";
 import Searchbar from "./components/searchbar";
 import WorkplaceSideBar from "./components/workspace-sidebar";
-import useWorkspaceId from "@/features/hooks/use-workspace-Id";
+import useWorkspaceId from "@/features/workspaces/hooks/use-workspace-Id";
 import { useGetWorkspaceById } from "@/features/workspaces/api/use-get-workspace-by-id";
 import { useRouter } from "next/navigation";
 
