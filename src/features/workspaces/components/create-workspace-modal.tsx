@@ -22,6 +22,7 @@ import { useRouter } from "next/navigation";
 const CreateWorkSpaceModel = () => {
   const router = useRouter();
   const [open, setOpen] = useCreateWorkspaceModal();
+  const [isLoading, setIsLoading] = useState(false);
   const {
     mutate,
     isPending,
@@ -35,9 +36,11 @@ const CreateWorkSpaceModel = () => {
 
   const handleSubmit = (data: z.infer<typeof createWorkspaceSchema>) => {
     mutate(data);
-    if (isSuccess) {
+    if (!isPending && isSuccess) {
       setOpen(false);
+      form.reset();
       if (workspace?.result) {
+        setOpen(false);
         toast.success("Workspace created successfully");
         localStorage.setItem("workspaceId", workspace.result.workspaceId);
         router.push(`/workspace/${workspace.result.workspaceId}`);
@@ -71,7 +74,12 @@ const CreateWorkSpaceModel = () => {
               )}
             />
             <FormMessage />
-            <Button type="submit" disabled={isPending}>
+            <Button
+              type="submit"
+              disabled={isPending}
+              isLoading={isPending}
+              className="bg-slack_dark_bg text-white"
+            >
               Create workspace
             </Button>
           </form>

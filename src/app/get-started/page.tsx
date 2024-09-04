@@ -15,16 +15,17 @@ import { Button } from "@/components/ui/button";
 const GetStarted = () => {
   const router = useRouter();
   const { data, isLoading } = useGetWorkspaces();
-  const { data: user, isLoading: isLoadingUser } = useCurrentUser();
+  const { data: user, isLoading: _isLoadingUser } = useCurrentUser();
 
   useEffect(() => {
     if (isLoading) return;
     if (data) {
-      if (data.error == "Unauthorized") router.replace("/auth/signin");
+      if (data.error == "Unauthorized" || user?.error)
+        router.replace("/auth/signin");
       if (data.result?.length == 1)
         router.replace(`/workspace/${data.result[0].workspaceId}`);
     }
-  }, [data, isLoading, router]);
+  }, [data, user, isLoading, router]);
 
   return (
     <div className="h-[100vh] bg-[#f4ede480]">
@@ -53,7 +54,7 @@ const GetStarted = () => {
               </div>
             </>
           ) : (
-            <NoWorkspaces />
+            <NoWorkspaces name={user?.result?.name || "to slack"} />
           )}
         </>
       )}

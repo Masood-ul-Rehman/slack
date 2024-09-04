@@ -30,8 +30,8 @@ export default function RootLayout({
       <html lang="en">
         <body className={inter.className}>
           <ConvexClientProvider>
-            <Models />
             <JotaiProvider>
+              <Models />
               {children}
               <Toaster />
             </JotaiProvider>
