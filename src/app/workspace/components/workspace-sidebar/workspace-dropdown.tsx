@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import {
   DropdownMenu,
@@ -13,8 +13,10 @@ import { Workspace } from "@/features/workspaces/types";
 import { captializeFirstLetter } from "@/lib/utils";
 import { CaretDown } from "@phosphor-icons/react";
 import WorkspaceAvatar from "@/components/workspace-avater";
+import PrefrencesModal from "./prefrences/prefrences-modal";
 
 const WorkspaceDropdown = ({ workspace }: { workspace: Workspace }) => {
+  const [open, setOpen] = useState(false);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center justify-center  cursor-pointer">
@@ -52,11 +54,19 @@ const WorkspaceDropdown = ({ workspace }: { workspace: Workspace }) => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Profile</DropdownMenuItem>
-        <DropdownMenuItem>Billing</DropdownMenuItem>
-        <DropdownMenuItem>Team</DropdownMenuItem>
-        <DropdownMenuItem>Subscription</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setOpen(true)}>
+          Workspace Preferences
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>Invite People to your Workspace</DropdownMenuItem>
       </DropdownMenuContent>
+      {open && (
+        <PrefrencesModal
+          open={open}
+          onOpenChange={setOpen}
+          workspace={workspace}
+        />
+      )}
     </DropdownMenu>
   );
 };

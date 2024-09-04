@@ -2,10 +2,11 @@ import { z } from "zod";
 import { Id } from "@/convex/_generated/dataModel";
 
 export const createWorkspaceSchema = z.object({
-  name: z.string().min(3, {
-    message: "Workspace name must be at least 3 characters",
+  name: z.string().max(12).min(3, {
+    message: "Workspace name must be at least 3 characters ",
   }),
 });
+
 export interface Workspace {
   _id: Id<"workspaces">;
   _creationTime: number;
