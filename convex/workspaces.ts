@@ -88,3 +88,29 @@ export const updateName = mutation({
     return { success: true, result: updatedWorkspace, error: "" };
   },
 });
+export const deleteWorkspace = mutation({
+  args: {
+    id: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return { success: false, result: null, error: "Unauthorized" };
+    const workspace = await ctx.db
+      .query("workspaces")
+      .filter((q) => q.eq(q.field("userId"), userId))
+      .filter((q) => q.eq(q.field("workspaceId"), args.id))
+      .unique();
+    if (workspace == null)
+      return { success: false, result: null, error: "Workspace not found" };
+    const member = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id_and_user_id", (q) =>
+        q.eq("workspaceId", args.id).eq("userId", userId)
+      )
+      .unique();
+    if (!member || member.role != "owner")
+      return { success: false, result: null, error: "You are not the owner" };
+    await ctx.db.delete(workspace._id);
+    return { success: true, result: null, error: "" };
+  },
+});
