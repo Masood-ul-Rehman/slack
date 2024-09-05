@@ -71,14 +71,17 @@ export const getById = query({
     return { success: true, result: workspace, error: "" };
   },
 });
-export const updateName = mutation({
+export const update = mutation({
   args: {
     id: v.string(),
-    name: v.string(),
+    name: v.optional(v.string()),
+    joinCode: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) return { success: false, result: null, error: "Unauthorized" };
+    if (args.name == null && args.joinCode == null)
+      return { success: false, result: null, error: "No changes" };
     const workspace = await ctx.db
       .query("workspaces")
       .filter((q) => q.eq(q.field("userId"), userId))
@@ -87,7 +90,8 @@ export const updateName = mutation({
     if (workspace == null)
       return { success: false, result: null, error: "Workspace not found" };
     const updatedWorkspace = await ctx.db.patch(workspace._id, {
-      name: args.name,
+      name: args.name ?? workspace.name,
+      joinCode: args.joinCode ?? workspace.joinCode,
     });
     return { success: true, result: updatedWorkspace, error: "" };
   },

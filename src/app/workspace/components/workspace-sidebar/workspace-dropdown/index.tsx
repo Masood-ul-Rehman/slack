@@ -14,9 +14,9 @@ import { captializeFirstLetter } from "@/lib/utils";
 import { CaretDown } from "@phosphor-icons/react";
 import WorkspaceAvatar from "@/components/workspace-avater";
 import PrefrencesModal from "./prefrences/prefrences-modal";
-
+import InvitePeopleModal from "./invite-people";
 const WorkspaceDropdown = ({ workspace }: { workspace: Workspace }) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<number>(0);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center justify-center  cursor-pointer">
@@ -50,19 +50,23 @@ const WorkspaceDropdown = ({ workspace }: { workspace: Workspace }) => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => setOpen(true)}>
+        <DropdownMenuItem onClick={() => setOpen(1)}>
           Workspace Preferences
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Invite People to your Workspace</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setOpen(2)}>
+          Invite People to your Workspace
+        </DropdownMenuItem>
       </DropdownMenuContent>
-      {open && (
+      {open === 1 ? (
         <PrefrencesModal
           open={open}
           onOpenChange={setOpen}
           workspace={workspace}
         />
-      )}
+      ) : open === 2 ? (
+        <InvitePeopleModal open={open} onOpenChange={setOpen} />
+      ) : null}
     </DropdownMenu>
   );
 };

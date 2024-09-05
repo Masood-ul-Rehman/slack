@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Form, FormField, FormMessage } from "@/components/ui/form";
 import { createWorkspaceItemsSchema } from "@/features/workspaces/types";
-import { useUpdateWorkspaceName } from "@/features/workspaces/api/use-update-workspace-name";
+import { useUpdateWorkspace } from "@/features/workspaces/api/use-update-workspace";
 import { toast } from "sonner";
 interface EditNameModalProps {
   open: boolean;
@@ -38,10 +38,9 @@ const EditNameModal: React.FC<EditNameModalProps> = ({
       name: workspace.name,
     },
   });
-  const { mutate, isPending, data } = useUpdateWorkspaceName();
+  const { mutate, isPending, data } = useUpdateWorkspace();
 
   const handleSave = (formData: z.infer<typeof createWorkspaceItemsSchema>) => {
-    console.log("clicked");
     mutate({ id: workspace.workspaceId, name: formData.name });
     if (!isPending && data?.success == false)
       toast.error(data?.error || "Unknown error occured");

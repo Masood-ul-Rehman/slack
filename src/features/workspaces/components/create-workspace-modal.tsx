@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Form, FormField, FormMessage } from "@/components/ui/form";
 import { useCreateWorkspaceModal } from "../store/use-create-workspace-modal";
-import { createWorkspaceSchema } from "../types";
+import { createWorkspaceItemsSchema } from "../types";
 import { useCreateWorkspace } from "../api/use-create-workspaces";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -30,13 +30,13 @@ const CreateWorkSpaceModel = () => {
     isSuccess,
     data: workspace,
   } = useCreateWorkspace();
-  const form = useForm<z.infer<typeof createWorkspaceSchema>>({
-    resolver: zodResolver(createWorkspaceSchema),
+  const form = useForm<z.infer<typeof createWorkspaceItemsSchema>>({
+    resolver: zodResolver(createWorkspaceItemsSchema),
   });
 
-  const handleSubmit = (data: z.infer<typeof createWorkspaceSchema>) => {
+  const handleSubmit = (data: z.infer<typeof createWorkspaceItemsSchema>) => {
     mutate(data);
-    if (!isPending && isSuccess) {
+    if (!isPending && data) {
       setOpen(false);
       form.reset();
       if (workspace?.result) {
@@ -65,15 +65,17 @@ const CreateWorkSpaceModel = () => {
               name="name"
               disabled={isPending}
               render={({ field }) => (
-                <Input
-                  placeholder="Workspace name e.g 'Work','Personal','Project'"
-                  autoFocus
-                  minLength={3}
-                  {...field}
-                />
+                <>
+                  <FormMessage />
+                  <Input
+                    placeholder="Workspace name e.g 'Work','Personal','Project'"
+                    autoFocus
+                    minLength={3}
+                    {...field}
+                  />
+                </>
               )}
             />
-            <FormMessage />
             <Button
               type="submit"
               disabled={isPending}

@@ -15,8 +15,8 @@ import EditNameModal from "./edit-name-model";
 import { Trash } from "@phosphor-icons/react";
 import { useDeleteWorkspace } from "@/features/workspaces/api/use-delete-workspace";
 interface PrefrencesModalProps {
-  open: boolean;
-  onOpenChange: React.Dispatch<React.SetStateAction<boolean>>;
+  open: number;
+  onOpenChange: React.Dispatch<React.SetStateAction<number>>;
   workspace: Workspace;
 }
 
@@ -34,13 +34,13 @@ const PrefrencesModal = ({
       toast.error(data?.error || "Unknown error occured");
     else if (isPending) return <div>Loading...</div>;
     else {
-      onOpenChange(false);
+      onOpenChange(0);
       toast.success("Workspace deleted");
       router.replace("/get-started");
     }
   };
   return (
-    <Dialog open={open} onOpenChange={() => onOpenChange(false)}>
+    <Dialog open={open === 1} onOpenChange={() => onOpenChange(0)}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Workspace Preferences</DialogTitle>
