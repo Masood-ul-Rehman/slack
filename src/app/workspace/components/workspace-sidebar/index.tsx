@@ -7,6 +7,7 @@ import DraftSent from "@/components/icons/draft-sent";
 import { Button } from "@/components/ui/button";
 import Rocket from "@/components/icons/rocket";
 import Channels from "./channels";
+import Members from "./members";
 const WorkplaceSideBar = () => {
   const { workspaceId } = UseGetWorkspaceId();
 
@@ -34,6 +35,8 @@ const WorkplaceSideBar = () => {
         />
 
         <Channels />
+
+        <Members />
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 
-export const useGetMembersWorkspaceById = ({
+export const useGetWorkspaceMembers = ({
   workspaceId,
 }: {
   workspaceId: string;

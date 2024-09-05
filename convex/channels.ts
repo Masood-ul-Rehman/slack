@@ -26,3 +26,30 @@ export const getChannels = query({
     return { success: true, result: channels, error: "" };
   },
 });
+
+export const createChannel = mutation({
+  args: {
+    workspaceId: v.string(),
+    name: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return { success: false, result: null, error: "Unauthorized" };
+
+    const member = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id_and_user_id", (q) =>
+        q.eq("workspaceId", args.workspaceId).eq("userId", userId)
+      )
+      .first();
+    if (!member) return { success: false, result: null, error: "Unauthorized" };
+
+    const channel = await ctx.db.insert("channels", {
+      name: args.name,
+      workspaceId: args.workspaceId,
+      members: [userId],
+      type: "text",
+    });
+    return { success: true, result: channel, error: "" };
+  },
+});

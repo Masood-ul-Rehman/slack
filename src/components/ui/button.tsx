@@ -9,7 +9,8 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        default:
+          "bg-slack_dark_bg text-primary-foreground hover:bg-slack_dark_bg/70 hover:text-[#f9edffc]",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:

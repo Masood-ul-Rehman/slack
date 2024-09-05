@@ -1,72 +1,64 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Workspace } from "@/features/workspaces/types";
+import { toast } from "sonner";
 
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
+  DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Form, FormField, FormMessage } from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { createWorkspaceItemsSchema } from "@/features/workspaces/types";
-import { useUpdateWorkspaceName } from "@/features/workspaces/api/use-update-workspace-name";
-import { toast } from "sonner";
-interface EditNameModalProps {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  onCancel: () => void;
-  workspace: Workspace;
-}
+import { useCreateChannel } from "@/features/workspaces/api/channels/use-create-channel";
+import useWorkspaceId from "@/features/workspaces/hooks/use-workspace-Id";
 
-const EditNameModal: React.FC<EditNameModalProps> = ({
+const CreateChannelDialog = ({
   open,
   onCancel,
-  workspace,
+}: {
+  open: boolean;
+  onCancel: () => void;
 }) => {
+  const { workspaceId } = useWorkspaceId();
   const form = useForm<z.infer<typeof createWorkspaceItemsSchema>>({
     resolver: zodResolver(createWorkspaceItemsSchema),
     defaultValues: {
-      name: workspace.name,
+      name: "",
     },
   });
-  const { mutate, isPending, data } = useUpdateWorkspaceName();
+  const { mutate, isPending, data } = useCreateChannel();
 
-  const handleSave = (formData: z.infer<typeof createWorkspaceItemsSchema>) => {
-    console.log("clicked");
-    mutate({ id: workspace.workspaceId, name: formData.name });
+  const onSave = (formData: z.infer<typeof createWorkspaceItemsSchema>) => {
+    mutate({ name: formData.name, workspaceId });
     if (!isPending && data?.success == false)
       toast.error(data?.error || "Unknown error occured");
     else {
       onCancel();
-      toast.success("Workspace name updated");
+      toast.success("Channel created");
     }
   };
   return (
     <Dialog open={open} onOpenChange={() => onCancel()}>
-      <DialogTrigger asChild>
-        <Button variant="outline">Open Dialog</Button>
-      </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit Workspace Name</DialogTitle>
+          <DialogTitle>Create Channel</DialogTitle>
           <DialogDescription>
-            Make changes to your workspace name here. Click save when
-            you&apos;re done.
+            Create a new channel for your workspace.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <Form {...form}>
             <form
-              onSubmit={form.handleSubmit(handleSave)}
+              onSubmit={form.handleSubmit(onSave)}
               className="w-full flex items-end justify-between gap-2"
             >
               <FormField
@@ -89,10 +81,10 @@ const EditNameModal: React.FC<EditNameModalProps> = ({
             onClick={() => onCancel()}
             disabled={isPending}
           >
-            Close
+            Cancel
           </Button>
-          <Button onClick={form.handleSubmit(handleSave)} disabled={isPending}>
-            Save changes
+          <Button onClick={form.handleSubmit(onSave)} disabled={isPending}>
+            Create Channel
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -100,4 +92,4 @@ const EditNameModal: React.FC<EditNameModalProps> = ({
   );
 };
 
-export default EditNameModal;
+export default CreateChannelDialog;

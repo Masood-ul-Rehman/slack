@@ -22,16 +22,16 @@ export const generateJoinCode = () => {
 export const redirectToWorkspace = (
   router: AppRouterInstance,
   type: "signIn" | "signUp",
-  data: any
+  data: any,
+  isLoading: boolean
 ) => {
   if (type == "signIn") {
-    console.log(data, "data from getstarted");
-    if (data && data.result.length > 0) {
-      console.log(data, "data from getstarted");
+    if (data && data.result.length > 0 && !isLoading) {
       router.replace(`/workspace/${data.result[0].workspaceId}`);
+      console.log("redirecting to workspace");
     } else {
-      console.log("else block");
       router.replace("/get-started");
+      console.log("redirecting to get-started");
     }
   } else router.replace("/get-started");
 };

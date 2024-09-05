@@ -52,7 +52,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
   const handleProviderSignin = (value: "github" | "google") => {
     setPending(true);
     signIn(value).finally(() => {
-      redirectToWorkspace(router, type, data);
+      redirectToWorkspace(router, type, data, isLoading);
     });
   };
 
@@ -65,7 +65,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
           : setError("Unknown error occurred");
       })
       .finally(() => {
-        redirectToWorkspace(router, type, data);
+        redirectToWorkspace(router, type, data, isLoading);
         setPending(false);
       });
   };

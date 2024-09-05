@@ -20,7 +20,7 @@ const Header = () => {
 
   return (
     <div className=" container flex justify-between items-center py-12">
-      <Image src={logo} alt="Logo" width={150} height={150} />
+      <Image src={logo} alt="Logo" width={150} height={150} priority />
       <div className="flex gap-8 items-center">
         {isLoading || data?.error ? (
           <Link href={"/auth/signin"}>

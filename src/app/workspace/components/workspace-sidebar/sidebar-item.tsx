@@ -30,7 +30,7 @@ const SidebarItem = ({
     <Button variant="ghost" className={cn(sidebarVariants({ variant }))}>
       <Link href={link} className="flex gap-2 items-center">
         {icon}
-        <h3 className="text-md font-bold">{label}</h3>
+        <h3 className="text-md font-medium tracking-normal">{label}</h3>
       </Link>
     </Button>
   );

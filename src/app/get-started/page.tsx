@@ -15,18 +15,24 @@ import { Button } from "@/components/ui/button";
 const GetStarted = () => {
   const router = useRouter();
   const { data, isLoading } = useGetWorkspaces();
-  const { data: user, isLoading: _isLoadingUser } = useCurrentUser();
+  const { data: user, isLoading: isLoadingUser } = useCurrentUser();
 
   useEffect(() => {
-    if (isLoading) return;
     if (data) {
-      if (data.error == "Unauthorized" || user?.error)
+      if (data.error == "Unauthorized" && !isLoadingUser)
         router.replace("/auth/signin");
+
       if (data.result?.length == 1)
         router.replace(`/workspace/${data.result[0].workspaceId}`);
     }
-  }, [data, user, isLoading, router]);
+  }, [data, user, isLoading, isLoadingUser, router]);
 
+  if (isLoading || isLoadingUser)
+    return (
+      <div className="flex justify-center items-center h-full">
+        <Loader className="size-8 animate-spin text-muted-foreground" />
+      </div>
+    );
   return (
     <div className="h-[100vh] bg-[#f4ede480]">
       {isLoading ? (
