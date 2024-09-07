@@ -37,7 +37,7 @@ const InvitePeopleModal = ({
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(
-        `${window.location.href}/invite/${inviteCode}`
+        `${window.location.origin}/join/${workspaceId}/${inviteCode}`
       );
       toast.success("Copied!", {
         description: "Invite code copied to clipboard.",

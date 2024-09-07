@@ -63,14 +63,52 @@ export const getById = query({
     if (!userId) return { success: false, result: null, error: "Unauthorized" };
     const workspace = await ctx.db
       .query("workspaces")
-      .filter((q) => q.eq(q.field("userId"), userId))
       .filter((q) => q.eq(q.field("workspaceId"), args.id))
       .first();
     if (workspace == null)
       return { success: false, result: null, error: "Workspace not found" };
+    const workspaceMember = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id_and_user_id", (q) =>
+        q.eq("workspaceId", workspace?.workspaceId).eq("userId", userId)
+      )
+      .first();
+    if (!workspaceMember)
+      return {
+        success: false,
+        result: workspace,
+        error: "You are not the member of this workspace",
+      };
     return { success: true, result: workspace, error: "" };
   },
 });
+export const getBasicInfo = query({
+  args: {
+    id: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    if (!args.id)
+      return { success: false, result: null, error: "No id provided" };
+    const workspace = await ctx.db
+      .query("workspaces")
+      .filter((q) => q.eq(q.field("workspaceId"), args.id))
+      .first();
+    if (workspace == null)
+      return { success: false, result: null, error: "Workspace not found" };
+
+    const members = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id", (q) => q.eq("workspaceId", args.id!))
+      .collect();
+    const basicInfo = {
+      workspaceId: workspace.workspaceId,
+      name: workspace.name,
+      members,
+    };
+    return { success: true, result: basicInfo, error: "" };
+  },
+});
+
 export const update = mutation({
   args: {
     id: v.string(),
@@ -96,6 +134,51 @@ export const update = mutation({
     return { success: true, result: updatedWorkspace, error: "" };
   },
 });
+export const join = mutation({
+  args: {
+    workspaceId: v.string(),
+    joinCode: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return { success: false, result: null, error: "Unauthorized" };
+    const workspace = await ctx.db
+      .query("workspaces")
+      .filter((q) => q.eq(q.field("workspaceId"), args.workspaceId))
+      .first();
+    if (workspace == null)
+      return {
+        success: false,
+        result: null,
+        error: "Workspace not found ",
+      };
+    if (workspace.joinCode !== args.joinCode)
+      return {
+        success: false,
+        result: null,
+        error: "Invalid join code",
+      };
+
+    const member = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id_and_user_id", (q) =>
+        q.eq("workspaceId", args.workspaceId).eq("userId", userId)
+      )
+      .unique();
+    if (member)
+      return {
+        success: false,
+        result: null,
+        error: "You are already in this workspace",
+      };
+    await ctx.db.insert("members", {
+      workspaceId: args.workspaceId,
+      userId: userId,
+      role: "member",
+    });
+    return { success: true, result: null, error: "" };
+  },
+});
 export const deleteWorkspace = mutation({
   args: {
     id: v.string(),
@@ -116,9 +199,9 @@ export const deleteWorkspace = mutation({
         q.eq("workspaceId", args.id).eq("userId", userId)
       )
       .unique();
-    if (!member || member.role != "owner")
+    if (!member || member.role !== "owner")
       return { success: false, result: null, error: "You are not the owner" };
-    await ctx.db.delete(workspace._id);
+    else if (member.role == "owner") await ctx.db.delete(workspace._id);
     return { success: true, result: null, error: "" };
   },
 });

@@ -29,41 +29,36 @@ const GetStarted = () => {
 
   if (isLoading || isLoadingUser)
     return (
-      <div className="flex justify-center items-center h-full">
+      <div className="flex flex-col justify-center gap-4 items-center h-[100vh] bg-[#f4ede480]">
         <Loader className="size-8 animate-spin text-muted-foreground" />
+        <h2 className="text-xl">Searching for your workspaces</h2>
       </div>
     );
   return (
     <div className="h-[100vh] bg-[#f4ede480]">
-      {isLoading ? (
-        <div className="flex justify-center items-center h-full">
-          <Loader className="size-8 animate-spin text-muted-foreground" />
-        </div>
-      ) : (
-        <>
-          {data && data?.result.length > 1 ? (
-            <>
-              <div className="text-center pt-8 flex flex-col justify-center items-center">
-                <Image src={logo} alt="Logo" width={150} height={150} />
-                <h4 className="font-bold mt-8 text-xl">
-                  Welcome Back {user?.result?.name}
-                </h4>
-                <p>Select a workspace to continue</p>
-                <ExistingWorkspaces workspaces={data} />
-                <p className="mt-4">or</p>
-                <Button
-                  variant="outline"
-                  className="mt-6 bg-slack_dark_bg text-white font-semibold"
-                >
-                  Create a new workspace
-                </Button>
-              </div>
-            </>
-          ) : (
-            <NoWorkspaces name={user?.result?.name || "to slack"} />
-          )}
-        </>
-      )}
+      <>
+        {data && data?.result.length > 1 ? (
+          <>
+            <div className="text-center pt-8 flex flex-col justify-center items-center">
+              <Image src={logo} alt="Logo" width={150} height={150} />
+              <h4 className="font-bold mt-8 text-xl">
+                Welcome Back {user?.result?.name}
+              </h4>
+              <p>Select a workspace to continue</p>
+              <ExistingWorkspaces workspaces={data} />
+              <p className="mt-4">or</p>
+              <Button
+                variant="outline"
+                className="mt-6 bg-slack_dark_bg text-white font-semibold"
+              >
+                Create a new workspace
+              </Button>
+            </div>
+          </>
+        ) : (
+          <NoWorkspaces name={user?.result?.name || "to slack"} />
+        )}
+      </>
     </div>
   );
 };

@@ -39,9 +39,12 @@ const Members = () => {
         </div>
       </div>
       {!isLoading && (
-        <div className="flex flex-col gap-2 px-3 mt-2 hover:bg-accent/20 rounded-md p-1 cursor-pointer">
+        <div className="flex flex-col gap-2 px-3 mt-2  ">
           {members?.result.map((member) => (
-            <div key={member._id} className="flex items-center gap-4">
+            <div
+              key={member._id}
+              className="flex items-center gap-4 hover:bg-accent/20 rounded-md p-1 cursor-pointer"
+            >
               <WorkspaceAvatar
                 img={member.user.image}
                 name={member.user.name}

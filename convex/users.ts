@@ -9,7 +9,7 @@ export const get = query({
     if (userId == null)
       return { success: false, result: null, error: "User not logged in" };
     const user = await ctx.db.get(userId);
-    return { success: true, result: user, error: "" };
+    return { success: true, result: user, error: null };
   },
 });
 export const getSession = query({
@@ -21,6 +21,6 @@ export const getSession = query({
       return { success: false, result: null, error: "Session not found" };
     }
     const session = await ctx.db.get(sessionId);
-    return { success: true, result: session, error: "" };
+    return { success: true, result: session, error: null };
   },
 });
