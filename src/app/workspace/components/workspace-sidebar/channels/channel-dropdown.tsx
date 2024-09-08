@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { CaretDown, CaretRight } from "@phosphor-icons/react";
 import {
   DropdownMenu,
@@ -8,9 +8,11 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import CreateChannelDialog from "./create-channel-dialog";
+import { useOpenCreateChannelModal } from "@/features/workspaces/store/use-open-crete-channel-modal";
+
 const ChannelDropdown = () => {
-  const [open, setOpen] = useState(false);
+  const [_openCreateChannelModal, setOpenCreateChannelModal] =
+    useOpenCreateChannelModal();
   return (
     <>
       <DropdownMenu>
@@ -29,7 +31,7 @@ const ChannelDropdown = () => {
         <DropdownMenuContent align="start" className="w-48">
           <DropdownMenuItem
             className="flex items-center gap-2 w-full justify-between"
-            onClick={() => setOpen(true)}
+            onClick={() => setOpenCreateChannelModal(true)}
           >
             <span>Create Channel</span>
             <CaretRight size={16} />
@@ -41,9 +43,6 @@ const ChannelDropdown = () => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      {open && (
-        <CreateChannelDialog open={open} onCancel={() => setOpen(false)} />
-      )}
     </>
   );
 };

@@ -47,6 +47,12 @@ const InviteCodeInput = ({ code }: { code?: string }) => {
     if (!isPending && data?.success === true) {
       toast.success("Invite code verified");
       router.replace(`/workspace/${workspaceId}`);
+    } else if (
+      !isPending &&
+      data?.error === "You are already a member of this workspace"
+    ) {
+      toast.error(`${data.error}`);
+      router.replace(`/workspace/${workspaceId}`);
     } else if (!isPending && data?.error) {
       toast.error(`${data.error}`);
     }

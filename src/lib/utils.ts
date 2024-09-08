@@ -15,9 +15,19 @@ export const generateWorkspaceId = () => {
   }
   return result;
 };
-export const generateJoinCode = () => {
+export const generateChannelId = () => {
   const string = crypto.randomUUID();
   return string.replace(/-/g, "").split("").slice(0, 6).join("");
+};
+
+export const generateJoinCode = () => {
+  const characters = "ABCDEFGHIJKLabcdefghijklmnopqrstuvwxyz012345";
+  const length = 6;
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
 };
 export const redirectToWorkspace = (
   router: AppRouterInstance,
@@ -28,10 +38,8 @@ export const redirectToWorkspace = (
   if (type == "signIn") {
     if (data && data.result.length > 0 && !isLoading) {
       router.replace(`/workspace/${data.result[0].workspaceId}`);
-      console.log("redirecting to workspace");
     } else {
       router.replace("/get-started");
-      console.log("redirecting to get-started");
     }
   } else router.replace("/get-started");
 };

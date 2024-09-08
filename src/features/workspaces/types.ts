@@ -16,3 +16,14 @@ export interface Workspace {
   joinCode: string;
   image?: string | undefined;
 }
+export interface Channel {
+  _id: Id<"channels">;
+  _creationTime: number;
+  name: string;
+  type: "text" | "voice";
+  status: "public" | "private";
+  members: Id<"users">[];
+  workspaceId: Id<"workspaces">;
+  channelOwner: Id<"users">;
+  channelId: string;
+}

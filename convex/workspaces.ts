@@ -1,7 +1,11 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
-import { generateJoinCode, generateWorkspaceId } from "../src/lib/utils";
+import {
+  generateJoinCode,
+  generateWorkspaceId,
+  generateChannelId,
+} from "../src/lib/utils";
 
 export const create = mutation({
   args: {
@@ -27,6 +31,9 @@ export const create = mutation({
       name: "general",
       type: "text",
       members: [userId],
+      status: "public",
+      channelOwner: userId,
+      channelId: generateChannelId(),
     });
     const workspace = await ctx.db.get(workspaceId);
     return { success: true, result: workspace, error: "" };
@@ -169,13 +176,24 @@ export const join = mutation({
       return {
         success: false,
         result: null,
-        error: "You are already in this workspace",
+        error: "You are already a member of this workspace",
       };
     await ctx.db.insert("members", {
       workspaceId: args.workspaceId,
       userId: userId,
       role: "member",
     });
+    const channels = await ctx.db
+      .query("channels")
+      .withIndex("by_workspace_id_status", (q) =>
+        q.eq("workspaceId", args.workspaceId).eq("status", "public")
+      )
+      .collect();
+    for (const channel of channels) {
+      await ctx.db.patch(channel._id, {
+        members: [...channel.members, userId],
+      });
+    }
     return { success: true, result: null, error: "" };
   },
 });

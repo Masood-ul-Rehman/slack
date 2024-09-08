@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import CreateWorkSpaceModel from "@/features/workspaces/components/create-workspace-modal";
+import CreateChannelDialog from "@/app/workspace/components/workspace-sidebar/channels/create-channel-dialog";
 
 const Models = () => {
   const [mounted, setMounted] = useState(false);
@@ -13,6 +14,7 @@ const Models = () => {
   return (
     <>
       <CreateWorkSpaceModel />
+      <CreateChannelDialog />
     </>
   );
 };

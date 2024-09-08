@@ -21,12 +21,16 @@ const schema = defineSchema({
     .index("by_workspace_id_and_user_id", ["workspaceId", "userId"]),
   channels: defineTable({
     workspaceId: v.string(),
+    channelId: v.string(),
     name: v.string(),
     type: v.union(v.literal("text"), v.literal("voice")),
     members: v.array(v.id("users")),
+    status: v.union(v.literal("public"), v.literal("private")),
+    channelOwner: v.id("users"),
   })
+    .index("by_workspace_id_status", ["workspaceId", "status"])
     .index("by_workspace_id", ["workspaceId"])
-    .index("by_workspace_id_member_id", ["workspaceId", "members"]),
+    .index("by_workspace_id_channel_id", ["workspaceId", "channelId"]),
 });
 
 export default schema;

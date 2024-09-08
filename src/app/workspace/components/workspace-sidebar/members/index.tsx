@@ -39,11 +39,11 @@ const Members = () => {
         </div>
       </div>
       {!isLoading && (
-        <div className="flex flex-col gap-2 px-3 mt-2  ">
+        <div className="flex flex-col gap-2 px-2 mt-2  ">
           {members?.result.map((member) => (
             <div
               key={member._id}
-              className="flex items-center gap-4 hover:bg-accent/20 rounded-md p-1 cursor-pointer"
+              className="flex items-center gap-4 hover:bg-accent/20 rounded-md p-1 cursor-pointer px-2"
             >
               <WorkspaceAvatar
                 img={member.user.image}

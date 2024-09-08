@@ -1,7 +1,6 @@
 "use client";
-import React, { use, useMemo } from "react";
-import { useParams } from "next/navigation";
-import { useRouter } from "next/router";
+import React, { useMemo } from "react";
+import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { Loader } from "lucide-react";
 import logo from "@/app/assets/logo.png";

@@ -7,5 +7,5 @@ export const useGetChannelsByWorkspaceId = ({ id }: { id: string }) => {
   });
 
   const isLoading = data === undefined;
-  return { isLoading, data };
+  return { data, isLoading };
 };
