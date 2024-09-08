@@ -32,7 +32,6 @@ const ChannelDetailsModal = ({
   const { data: channels } = useGetChannelsByWorkspaceId({
     id: workspaceId,
   });
-  console.log(channels?.result, "channels");
   const currentIndex = channels?.result?.findIndex(
     (channel) => channel.channelId === channelId
   );
