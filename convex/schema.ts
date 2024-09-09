@@ -31,6 +31,18 @@ const schema = defineSchema({
     .index("by_workspace_id_status", ["workspaceId", "status"])
     .index("by_workspace_id", ["workspaceId"])
     .index("by_workspace_id_channel_id", ["workspaceId", "channelId"]),
+  messages: defineTable({
+    workspaceId: v.string(),
+    channelId: v.optional(v.string()),
+    memberId: v.id("members"),
+    messageId: v.string(),
+    body: v.string(),
+    image: v.optional(v.string()),
+    userId: v.id("users"),
+    parentMessageId: v.optional(v.string()),
+    threadId: v.optional(v.string()),
+    updatedAt: v.number(),
+  }),
 });
 
 export default schema;
