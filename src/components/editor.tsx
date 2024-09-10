@@ -93,6 +93,10 @@ const Editor = ({
                   if (isEmpty) return;
                   const body = JSON.stringify(quill.getContents());
                   submitRef.current?.({ body, image: addedImage });
+                  setImage(null);
+                  if (imageElementRef.current) {
+                    imageElementRef.current.value = "";
+                  }
                 },
               },
             },
@@ -132,7 +136,6 @@ const Editor = ({
     }
   };
   const handleEmojiSelect = (emoji: any) => {
-    console.log(emoji);
     const quill = quillRef.current;
     const index = quill?.getSelection()?.index || 0;
     quill?.insertText(index, emoji);

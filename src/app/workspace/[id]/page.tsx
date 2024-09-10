@@ -22,7 +22,7 @@ const Workspace = () => {
     useGetChannelsByWorkspaceId({ id: workspaceId });
   const channelId = useMemo(() => {
     if (!channels?.result || channelsLoading) return undefined;
-    return channels.result[0]?._id;
+    return channels.result[0]?.channelId;
   }, [channels, channelsLoading]);
 
   useEffect(() => {

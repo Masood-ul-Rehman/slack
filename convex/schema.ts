@@ -35,7 +35,6 @@ const schema = defineSchema({
     workspaceId: v.string(),
     channelId: v.optional(v.string()),
     memberId: v.id("members"),
-    messageId: v.string(),
     body: v.string(),
     image: v.optional(v.string()),
     userId: v.id("users"),

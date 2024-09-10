@@ -12,7 +12,6 @@ const Join = () => {
   const router = useRouter();
   const { workspaceId, inviteId } = useParams();
 
-  const { mutate, isPending } = useJoinWorkspace();
   const [invalidInvite, setInvalidInvite] = useState(false);
 
   useEffect(() => {
