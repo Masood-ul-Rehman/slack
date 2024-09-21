@@ -6,8 +6,8 @@ import { format, isToday, isYesterday } from "date-fns";
 import Hint from "./hint";
 import WorkspaceAvatar from "./workspace-avater";
 import Thumbnail from "./thumbnail";
+import MessageToolbar from "./message-toolbar";
 const Renderer = dynamic(() => import("./renderer"), { ssr: false });
-
 interface MessageProps {
   id: Id<"messages">;
   memeberId: Id<"members">;
@@ -78,23 +78,36 @@ const Message = ({
   }
   return (
     <div className="flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-100/60 group relative cursor-pointer">
-      <div className="flex items-start gap-4">
-        <WorkspaceAvatar img={authorImage} name={authorName} />
-        <div className="flex flex-col gap-[2px]">
-          <div className="flex items-center gap-2">
-            <h2 className="text-md font-bold">{authorName}</h2>
-            <Hint label={formatFullTime(new Date(createdAt))}>
-              <button className="text-[10px] text-muted-foreground  w-fit text-center pt-[4px]">
-                {format(new Date(createdAt), "hh:mm a")}
-              </button>
-            </Hint>
+      <div className="flex justify-between items-start gap-4">
+        <div className="flex items-start gap-4 ">
+          <WorkspaceAvatar img={authorImage} name={authorName} />
+          <div className="flex flex-col gap-[2px]">
+            <div className="flex items-center gap-2">
+              <h2 className="text-md font-bold">{authorName}</h2>
+              <Hint label={formatFullTime(new Date(createdAt))}>
+                <button className="text-[10px] text-muted-foreground  w-fit text-center pt-[4px]">
+                  {format(new Date(createdAt), "hh:mm a")}
+                </button>
+              </Hint>
+            </div>
+            <Renderer value={body} />
+            {updatedAt ? (
+              <p className="text-xs text-muted-foreground">(edited)</p>
+            ) : null}
+            {image && <Thumbnail url={image} />}
           </div>
-          <Renderer value={body} />
-          {updatedAt ? (
-            <p className="text-xs text-muted-foreground">(edited)</p>
-          ) : null}
-          {image && <Thumbnail url={image} />}
         </div>
+        {!isEditing && (
+          <MessageToolbar
+            isAuthor={isAuthor}
+            isPending={false}
+            handleEdit={() => setEditingId(id)}
+            handleDelete={() => {}}
+            handleThread={() => {}}
+            hideThreadButton={false}
+            handleReaction={() => {}}
+          />
+        )}
       </div>
     </div>
   );
