@@ -11,9 +11,10 @@ import { Loader } from "lucide-react";
 const ChannelPage = () => {
   const { id, channelId } = useParams();
   const { data: channel, isLoading: isLoadingChannel } = useGetChannelById(
-    id as string,
-    channelId as string
+    channelId as string,
+    id as string
   );
+  console.log(JSON.stringify(channel, null, 2));
   const {
     results: messages,
     status,
@@ -34,6 +35,8 @@ const ChannelPage = () => {
       <MessageList
         messages={messages}
         loadMore={loadMore}
+        channelName={channel?.result?.name || "Channel"}
+        channelCreatedAt={new Date(channel?.result?._creationTime ?? 0)}
         isLoadingMore={status === "LoadingMore"}
         canLoadMore={true}
       />

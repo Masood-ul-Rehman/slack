@@ -27,7 +27,7 @@ interface MessageProps {
   threadCount?: number;
   threadImage?: string | null | undefined;
   threadTimeStamp?: number;
-  channelCreatedAt?: string | undefined;
+  channelCreatedAt?: Date | undefined;
   variant?: "channel" | "thread" | "conversation";
   isCompact: boolean;
   updatedAt: Doc<"messages">["updatedAt"];

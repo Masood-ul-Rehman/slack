@@ -1,13 +1,13 @@
 import React, { use } from "react";
 import { differenceInMinutes, format, isToday, isYesterday } from "date-fns";
 import Message from "./message";
+import ChannelHero from "./channel-hero";
 import { GetMessagesReturnType } from "@/features/workspaces/api/messages/use-get-messages";
-
 interface MessageListProps {
   memberName?: string;
   memberImage?: string;
   channelName?: string;
-  channelCreatedAt?: string;
+  channelCreatedAt?: Date;
   variant?: "channel" | "thread" | "conversation";
   messages: GetMessagesReturnType | undefined;
   loadMore: () => void;
@@ -97,6 +97,16 @@ const MessageList = ({
             })}
           </div>
         ))}
+      {variant === "channel" && channelName && channelCreatedAt && (
+        <div className="flex justify-center items-center">
+          <button>Load More</button>
+        </div>
+      )}
+
+      <ChannelHero
+        channelName={channelName}
+        channelCreatedAt={channelCreatedAt}
+      />
     </div>
   );
 };
