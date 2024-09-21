@@ -97,6 +97,7 @@
 }
 .ql-renderer {
   padding: 0 !important;
+  height: auto !important;
 }
 .ql-editor :before {
   left: 12px !important;
