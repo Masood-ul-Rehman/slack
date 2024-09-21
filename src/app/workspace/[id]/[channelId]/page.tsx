@@ -6,6 +6,7 @@ import ChatInput from "./components/chat-input";
 import MessageList from "@/components/message-list";
 import { useGetChannelById } from "@/features/workspaces/api/channels/use-get-channel-by-id";
 import { useGetMessages } from "@/features/workspaces/api/messages/use-get-messages";
+import { Loader } from "lucide-react";
 
 const ChannelPage = () => {
   const { id, channelId } = useParams();
@@ -21,7 +22,12 @@ const ChannelPage = () => {
     channelId: channelId as string,
   });
   if (isLoadingChannel || status === "LoadingFirstPage")
-    return <div>Loading...</div>;
+    return (
+      <div className="flex-1 flex items-center justify-center flex-col gap-2">
+        <Loader className="size-6 animate-spin text-muted-foreground" />
+        <h4>Loading your messages...</h4>
+      </div>
+    );
 
   return (
     <div className="h-[calc(100vh-8rem)]  flex flex-col">

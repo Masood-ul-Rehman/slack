@@ -1,5 +1,5 @@
 import React, { use } from "react";
-import { format, isToday, isYesterday } from "date-fns";
+import { differenceInMinutes, format, isToday, isYesterday } from "date-fns";
 import Message from "./message";
 import { GetMessagesReturnType } from "@/features/workspaces/api/messages/use-get-messages";
 
@@ -14,7 +14,7 @@ interface MessageListProps {
   isLoadingMore: boolean;
   canLoadMore: boolean;
 }
-
+const TIME_THRESHOLD = 1;
 const MessageList = ({
   memberName,
   memberImage,
@@ -62,29 +62,39 @@ const MessageList = ({
                 {formatDateLabel(date)}
               </span>
             </div>
-            {messages.map((message: (typeof messages)[0]) => (
-              <Message
-                key={message._id}
-                id={message._id}
-                isAuthor={false}
-                memeberId={message.memberId}
-                authorName={message.user.name}
-                authorImage={message.user.image}
-                reaction={message.reactions}
-                body={message.body}
-                image={message.image}
-                updatedAt={message._creationTime}
-                createdAt={message._creationTime}
-                isEditing={false}
-                setEditingId={() => {}}
-                isCompact={false}
-                threadCount={messages.threadCount}
-                threadImage={messages.threadImage}
-                threadTimeStamp={messages.threadTimeStamp}
-                channelCreatedAt={channelCreatedAt}
-                variant={variant}
-              />
-            ))}
+            {messages.map((message: (typeof messages)[0]) => {
+              const previousMessage = messages[messages.indexOf(message) - 1];
+              const isCompact =
+                previousMessage &&
+                previousMessage.user.id === message.user.id &&
+                differenceInMinutes(
+                  new Date(message._creationTime),
+                  new Date(previousMessage._creationTime)
+                ) < TIME_THRESHOLD;
+              return (
+                <Message
+                  key={message._id}
+                  id={message._id}
+                  isAuthor={false}
+                  memeberId={message.memberId}
+                  authorName={message.user.name}
+                  authorImage={message.user.image}
+                  reaction={message.reactions}
+                  body={message.body}
+                  image={message.image}
+                  updatedAt={message._updatedTime}
+                  createdAt={message._creationTime}
+                  isEditing={false}
+                  setEditingId={() => {}}
+                  isCompact={isCompact}
+                  threadCount={messages.threadCount}
+                  threadImage={messages.threadImage}
+                  threadTimeStamp={messages.threadTimeStamp}
+                  channelCreatedAt={channelCreatedAt}
+                  variant={variant}
+                />
+              );
+            })}
           </div>
         ))}
     </div>
