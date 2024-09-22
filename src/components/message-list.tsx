@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { differenceInMinutes, format, isToday, isYesterday } from "date-fns";
+import { Loader } from "lucide-react";
+
 import Message from "./message";
 import ChannelHero from "./channel-hero";
 import { useGetSession } from "@/features/users/api/use-get-session";
@@ -100,12 +102,31 @@ const MessageList = ({
             })}
           </div>
         ))}
-      {variant === "channel" && channelName && channelCreatedAt && (
-        <div className="flex justify-center items-center">
-          <button>Load More</button>
+      <div
+        className="h-1 "
+        ref={(el) => {
+          if (el) {
+            const observer = new IntersectionObserver(
+              ([entry]) => {
+                if (entry.isIntersecting && canLoadMore) {
+                  loadMore();
+                }
+              },
+              { threshold: 1.0 }
+            );
+            observer.observe(el);
+            return () => observer.disconnect();
+          }
+        }}
+      />
+      {isLoadingMore && (
+        <div className="text-center my-2 relative ">
+          <hr className="absolute  left-0 right-0 border-t border-gray-300" />
+          <span className="relative -top-3 inline-block px-4 py-1 z-10 bg-white text-xs border border-gray-300 shadow-sm rounded-md">
+            <Loader className="size-4 animate-spin transition-all" />
+          </span>
         </div>
       )}
-
       <ChannelHero
         channelName={channelName}
         channelCreatedAt={channelCreatedAt}
