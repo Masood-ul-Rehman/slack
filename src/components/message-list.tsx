@@ -1,4 +1,4 @@
-import React, { use } from "react";
+import React, { useState } from "react";
 import { differenceInMinutes, format, isToday, isYesterday } from "date-fns";
 import Message from "./message";
 import ChannelHero from "./channel-hero";
@@ -26,6 +26,7 @@ const MessageList = ({
   isLoadingMore,
   canLoadMore,
 }: MessageListProps) => {
+  const [isEditing, setIsEditing] = useState<string | null>(null);
   const formatDateLabel = (date: string) => {
     const dateObj = new Date(date);
     if (isToday(dateObj)) {
@@ -63,6 +64,7 @@ const MessageList = ({
               </span>
             </div>
             {messages.map((message: (typeof messages)[0]) => {
+              console.log(isEditing, message.memberId);
               const previousMessage = messages[messages.indexOf(message) - 1];
               const isCompact =
                 previousMessage &&
@@ -75,7 +77,7 @@ const MessageList = ({
                 <Message
                   key={message._id}
                   id={message._id}
-                  isAuthor={false}
+                  isAuthor={message.user.id === message.memberId}
                   memeberId={message.memberId}
                   authorName={message.user.name}
                   authorImage={message.user.image}
@@ -84,8 +86,8 @@ const MessageList = ({
                   image={message.image}
                   updatedAt={message._updatedTime}
                   createdAt={message._creationTime}
-                  isEditing={false}
-                  setEditingId={() => {}}
+                  isEditing={isEditing === message._id}
+                  setEditingId={(id) => setIsEditing(id)}
                   isCompact={isCompact}
                   threadCount={messages.threadCount}
                   threadImage={messages.threadImage}

@@ -186,3 +186,49 @@ export const get = query({
     };
   },
 });
+
+export const updateMessage = mutation({
+  args: {
+    messageId: v.id("messages"),
+    body: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const { messageId, body } = args;
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+    const message = await ctx.db.get(messageId);
+    if (!message) throw new Error("Message not found");
+    const member = await getMember(ctx, {
+      workspaceId: message.workspaceId,
+      userId,
+    });
+    if (!member || message.memberId !== member._id)
+      throw new Error("Unauthorized");
+
+    const updatedMessage = await ctx.db.patch(messageId, {
+      body,
+      updatedAt: Date.now(),
+    });
+    return { success: true, result: updatedMessage, error: null };
+  },
+});
+export const deleteMessage = mutation({
+  args: {
+    messageId: v.id("messages"),
+  },
+  handler: async (ctx, args) => {
+    const { messageId } = args;
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+    const message = await ctx.db.get(messageId);
+    if (!message) throw new Error("Message not found");
+    const member = await getMember(ctx, {
+      workspaceId: message.workspaceId,
+      userId,
+    });
+    if (!member || message.memberId !== member._id)
+      throw new Error("Unauthorized");
+    await ctx.db.delete(messageId);
+    return { success: true, result: message, error: null };
+  },
+});

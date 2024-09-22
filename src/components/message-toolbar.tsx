@@ -1,11 +1,4 @@
-import React from "react";
-import Hint from "./hint";
-import { Button } from "./ui/button";
-import ThreadsIcon from "./icons/threads";
-import ForwardIcon from "./icons/forward";
-import { MoreVertical, Smile } from "lucide-react";
-import LaterNormal from "./icons/later-normal";
-import More from "./icons/more";
+import React, { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -13,6 +6,13 @@ import {
   DropdownMenuItem,
 } from "./ui/dropdown-menu";
 import EmojiPopover from "./emoji-popover";
+import Hint from "./hint";
+import { Button } from "./ui/button";
+import ThreadsIcon from "./icons/threads";
+import ForwardIcon from "./icons/forward";
+import { MoreVertical, Smile } from "lucide-react";
+import LaterNormal from "./icons/later-normal";
+
 interface MessageToolbarProps {
   isAuthor: boolean;
   isPending: boolean;
@@ -31,9 +31,10 @@ const MessageToolbar = ({
   hideThreadButton,
   handleReaction,
 }: MessageToolbarProps) => {
+  const [open, setOpen] = useState(false);
   const MoreAction = () => {
     return (
-      <DropdownMenu>
+      <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger>
           <MoreVertical className="size-4" />
         </DropdownMenuTrigger>
@@ -92,7 +93,12 @@ const MessageToolbar = ({
         </Hint>
         {isAuthor && (
           <Hint label="More actions">
-            <Button variant="ghost" size="iconSm" disabled={isPending}>
+            <Button
+              variant="ghost"
+              size="iconSm"
+              disabled={isPending}
+              onClick={() => setOpen(true)}
+            >
               <MoreAction />
             </Button>
           </Hint>
