@@ -14,7 +14,6 @@ const ChannelPage = () => {
     channelId as string,
     id as string
   );
-  console.log(JSON.stringify(channel, null, 2));
   const {
     results: messages,
     status,

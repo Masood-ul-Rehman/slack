@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { Id, Doc } from "@/convex/_generated/dataModel";
+import { GetMessagesReturnType } from "@/features/workspaces/api/messages/use-get-messages";
 
 export const createWorkspaceItemsSchema = z.object({
   name: z.string().max(12).min(3, {
@@ -51,4 +52,15 @@ export interface MessageProps {
   isCompact: boolean;
   updatedAt: Doc<"messages">["updatedAt"];
   createdAt: Doc<"messages">["_creationTime"];
+}
+export interface MessageListProps {
+  memberName?: string;
+  memberImage?: string;
+  channelName?: string;
+  channelCreatedAt?: Date;
+  variant?: "channel" | "thread" | "conversation";
+  messages: GetMessagesReturnType | undefined;
+  loadMore: () => void;
+  isLoadingMore: boolean;
+  canLoadMore: boolean;
 }

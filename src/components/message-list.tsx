@@ -2,18 +2,9 @@ import React, { useState } from "react";
 import { differenceInMinutes, format, isToday, isYesterday } from "date-fns";
 import Message from "./message";
 import ChannelHero from "./channel-hero";
-import { GetMessagesReturnType } from "@/features/workspaces/api/messages/use-get-messages";
-interface MessageListProps {
-  memberName?: string;
-  memberImage?: string;
-  channelName?: string;
-  channelCreatedAt?: Date;
-  variant?: "channel" | "thread" | "conversation";
-  messages: GetMessagesReturnType | undefined;
-  loadMore: () => void;
-  isLoadingMore: boolean;
-  canLoadMore: boolean;
-}
+import { useGetSession } from "@/features/users/api/use-get-session";
+import { MessageListProps } from "@/features/workspaces/types";
+
 const TIME_THRESHOLD = 1;
 const MessageList = ({
   memberName,
@@ -37,6 +28,8 @@ const MessageList = ({
       return format(dateObj, "EEEE MMMM, M");
     }
   };
+  const { data: session } = useGetSession();
+  const userId = session?.result?.userId;
 
   const groupedMessages =
     messages !== undefined &&
@@ -52,6 +45,7 @@ const MessageList = ({
       },
       {} as Record<string, typeof messages>
     );
+
   return (
     <div className="flex h-full flex-col-reverse pb-4 overflow-y-auto messages-scrollbar">
       {messages &&
@@ -64,7 +58,14 @@ const MessageList = ({
               </span>
             </div>
             {messages.map((message: (typeof messages)[0]) => {
-              console.log(isEditing, message.memberId);
+              const isUpdated =
+                differenceInMinutes(
+                  new Date(message.updatedAt),
+                  new Date(message._creationTime)
+                ) >= 1
+                  ? message.updatedAt
+                  : null;
+
               const previousMessage = messages[messages.indexOf(message) - 1];
               const isCompact =
                 previousMessage &&
@@ -77,14 +78,14 @@ const MessageList = ({
                 <Message
                   key={message._id}
                   id={message._id}
-                  isAuthor={message.user.id === message.memberId}
+                  isAuthor={message.user._id === userId}
                   memeberId={message.memberId}
                   authorName={message.user.name}
                   authorImage={message.user.image}
                   reaction={message.reactions}
                   body={message.body}
                   image={message.image}
-                  updatedAt={message._updatedTime}
+                  updatedAt={isUpdated}
                   createdAt={message._creationTime}
                   isEditing={isEditing === message._id}
                   setEditingId={(id) => setIsEditing(id)}

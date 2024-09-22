@@ -11,6 +11,7 @@ import { useEditMessage } from "@/features/workspaces/api/messages/use-edit-mess
 import { MessageProps } from "@/features/workspaces/types";
 import { cn } from "@/lib/utils";
 const Renderer = dynamic(() => import("./renderer"), { ssr: false });
+const Editor = dynamic(() => import("./editor"), { ssr: false });
 
 const Message = ({
   id,
@@ -32,25 +33,13 @@ const Message = ({
   variant,
   isCompact,
 }: MessageProps) => {
-  useEffect(() => {
-    console.log(isEditing, "this is isEditing");
-  }, [isEditing]);
-
-  const {
-    mutate: deleteMessage,
-    isPending: isDeletePending,
-    data: deleteData,
-  } = useDeleteMessage();
-  const {
-    mutate: editMessage,
-    isPending: isEditPending,
-    data: editData,
-  } = useEditMessage();
+  const { mutate: deleteMessage } = useDeleteMessage();
+  const { mutate: editMessage, isPending: isEditPending } = useEditMessage();
   const handleDelete = () => {
     deleteMessage({ messageId: id });
   };
 
-  const handleEdit = () => {
+  const handleUpdate = (body: string) => {
     editMessage({ messageId: id, body });
     setEditingId(null);
   };
@@ -67,20 +56,32 @@ const Message = ({
         )}
       >
         <div className="flex justify-between items-start gap-4">
-          <div className="flex items-start gap-4">
-            <Hint label={formatFullTime(new Date(createdAt))}>
-              <button className="text-[10px] text-muted-foreground opacity-0 group-hover:opacity-100 w-fit text-center pt-[4px]">
-                {format(new Date(createdAt), "hh:mm a")}
-              </button>
-            </Hint>
-            <div className="flex flex-col gap-1">
-              <Renderer value={body} />
-              {image && <Thumbnail url={image} />}
-              {updatedAt ? (
-                <p className="text-xs text-muted-foreground">(edited)</p>
-              ) : null}
+          {isEditing ? (
+            <div className="w-full h-full">
+              <Editor
+                onSubmit={(data) => handleUpdate(data.body)}
+                disabled={isEditPending}
+                defaultValue={JSON.parse(body)}
+                variant="edit"
+                onCancel={() => setEditingId(null)}
+              />
             </div>
-          </div>
+          ) : (
+            <div className="flex items-start gap-4">
+              <Hint label={formatFullTime(new Date(createdAt))}>
+                <button className="text-[10px] text-muted-foreground opacity-0 group-hover:opacity-100 w-fit text-center pt-[4px]">
+                  {format(new Date(createdAt), "hh:mm a")}
+                </button>
+              </Hint>
+              <div className="flex flex-col gap-1">
+                <Renderer value={body} />
+                {image && <Thumbnail url={image} />}
+                {updatedAt ? (
+                  <p className="text-xs text-muted-foreground">(edited)</p>
+                ) : null}
+              </div>
+            </div>
+          )}
           {!isEditing && (
             <MessageToolbar
               isAuthor={isAuthor}
@@ -104,23 +105,35 @@ const Message = ({
       )}
     >
       <div className="flex justify-between items-start gap-4">
-        <div className="flex items-start gap-4 ">
+        <div className="flex items-start gap-4 w-full">
           <WorkspaceAvatar img={authorImage} name={authorName} />
-          <div className="flex flex-col gap-[2px]">
-            <div className="flex items-center gap-2">
-              <h2 className="text-md font-bold">{authorName}</h2>
-              <Hint label={formatFullTime(new Date(createdAt))}>
-                <button className="text-[10px] text-muted-foreground  w-fit text-center pt-[4px]">
-                  {format(new Date(createdAt), "hh:mm a")}
-                </button>
-              </Hint>
+          {isEditing ? (
+            <div className="w-full h-full">
+              <Editor
+                onSubmit={(data) => handleUpdate(data.body)}
+                disabled={isEditPending}
+                defaultValue={JSON.parse(body)}
+                variant="edit"
+                onCancel={() => setEditingId(null)}
+              />
             </div>
-            <Renderer value={body} />
-            {updatedAt ? (
-              <p className="text-xs text-muted-foreground">(edited)</p>
-            ) : null}
-            {image && <Thumbnail url={image} />}
-          </div>
+          ) : (
+            <div className="flex flex-col gap-[2px]">
+              <div className="flex items-center gap-2">
+                <h2 className="text-md font-bold">{authorName}</h2>
+                <Hint label={formatFullTime(new Date(createdAt))}>
+                  <button className="text-[10px] text-muted-foreground  w-fit text-center pt-[4px]">
+                    {format(new Date(createdAt), "hh:mm a")}
+                  </button>
+                </Hint>
+              </div>
+              <Renderer value={body} />
+              {updatedAt ? (
+                <p className="text-xs text-muted-foreground">(edited)</p>
+              ) : null}
+              {image && <Thumbnail url={image} />}
+            </div>
+          )}
         </div>
         {!isEditing && (
           <MessageToolbar

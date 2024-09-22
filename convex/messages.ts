@@ -204,12 +204,15 @@ export const updateMessage = mutation({
     });
     if (!member || message.memberId !== member._id)
       throw new Error("Unauthorized");
-
-    const updatedMessage = await ctx.db.patch(messageId, {
-      body,
-      updatedAt: Date.now(),
-    });
-    return { success: true, result: updatedMessage, error: null };
+    try {
+      const updatedMessage = await ctx.db.patch(messageId, {
+        body,
+        updatedAt: Date.now(),
+      });
+      return { success: true, result: updatedMessage, error: null };
+    } catch (error) {
+      return { success: false, result: null, error: "Error updating message" };
+    }
   },
 });
 export const deleteMessage = mutation({

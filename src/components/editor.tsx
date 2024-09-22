@@ -153,9 +153,9 @@ const Editor = ({
         }}
       />
       <div className="flex flex-col border border-x-slate-200 rounde-md overflow-hidden ">
-        <div ref={editorRef} className="h-full ql-custom" />
+        <div ref={editorRef} className="h-full ql-custom bg-white" />
         {!!image && (
-          <div className="relative size-[62px] mx-4 mb-2 flex items-center justify-center group/image">
+          <div className="relative size-[62px] mx-4 mb-2 flex items-center justify-center group/image ">
             <Hint label="Remove image">
               <button
                 className="hidden group-hover/image:flex   bg-black/70 hover:bg-black absolute -top-2.5 -right-3 z-[10] rounded-full text-white size-6 border-2 border-white items-center justify-center  transition-all duration-300  "
@@ -177,7 +177,7 @@ const Editor = ({
             />
           </div>
         )}
-        <div className="flex px-2 pb-2 z-[5]">
+        <div className="flex px-2 pb-2 z-[5] bg-white">
           <Hint label={toolBarVisible ? "Show formating" : "Hide formating"}>
             <Button
               disabled={disabled}
