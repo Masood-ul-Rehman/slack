@@ -20,7 +20,7 @@ interface MessageToolbarProps {
   handleDelete: () => void;
   handleThread: () => void;
   hideThreadButton: boolean;
-  handleReaction: (emoji: any) => void;
+  handleReaction: (emoji: string) => void;
 }
 const MessageToolbar = ({
   isAuthor,
@@ -56,7 +56,7 @@ const MessageToolbar = ({
         <EmojiPopover
           hint="Add reaction"
           onEmojiSelect={(emoji: any) => {
-            handleReaction(emoji.native);
+            handleReaction(emoji);
           }}
         >
           <Button variant="ghost" size="iconSm" disabled={isPending}>

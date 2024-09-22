@@ -66,7 +66,6 @@ const schema = defineSchema({
     messageId: v.id("messages"),
     memberId: v.id("members"),
     reaction: v.string(),
-    updatedAt: v.number(),
   })
     .index("by_workspace_id", ["workspaceId"])
     .index("by_message_id", ["messageId"])

@@ -64,3 +64,13 @@ export interface MessageListProps {
   isLoadingMore: boolean;
   canLoadMore: boolean;
 }
+export interface ReactionsProps {
+  data: Array<
+    Omit<Doc<"reactions">, "memberId"> & {
+      count: number;
+      memberIds: Id<"members">[];
+    }
+  >;
+
+  onChange: (reaction: string) => void;
+}

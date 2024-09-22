@@ -172,7 +172,7 @@ export const get = query({
               image,
               member,
               user,
-              reactions: reactionWithOutMemberIds,
+              reactions: groupedReactions,
               threadCount: thread.count,
               threadImage: thread.image,
               threadTimeStamp: thread.timeStamp,

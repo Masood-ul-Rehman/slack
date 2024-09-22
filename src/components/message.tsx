@@ -1,15 +1,19 @@
-import React, { useEffect } from "react";
+import React from "react";
 import dynamic from "next/dynamic";
 import { format, isToday, isYesterday } from "date-fns";
 
+import { cn } from "@/lib/utils";
 import Hint from "./hint";
 import WorkspaceAvatar from "./workspace-avater";
 import Thumbnail from "./thumbnail";
 import MessageToolbar from "./message-toolbar";
+import { Reactions } from "./reactions";
 import { useDeleteMessage } from "@/features/workspaces/api/messages/use-delete-message";
 import { useEditMessage } from "@/features/workspaces/api/messages/use-edit-message";
+import { useCreateReaction } from "@/features/workspaces/api/messages/use-create-reaction";
 import { MessageProps } from "@/features/workspaces/types";
-import { cn } from "@/lib/utils";
+import useWorkspaceId from "@/features/workspaces/hooks/use-workspace-Id";
+import { useGetCurrentMember } from "@/features/workspaces/api/members/use-current-member";
 const Renderer = dynamic(() => import("./renderer"), { ssr: false });
 const Editor = dynamic(() => import("./editor"), { ssr: false });
 
@@ -33,8 +37,12 @@ const Message = ({
   variant,
   isCompact,
 }: MessageProps) => {
+  const { workspaceId } = useWorkspaceId();
+  const { data: currentMember }: any = useGetCurrentMember({ workspaceId });
   const { mutate: deleteMessage } = useDeleteMessage();
   const { mutate: editMessage, isPending: isEditPending } = useEditMessage();
+  const { mutate: createReaction, isPending: isReactionPending } =
+    useCreateReaction();
   const handleDelete = () => {
     deleteMessage({ messageId: id });
   };
@@ -44,6 +52,14 @@ const Message = ({
     setEditingId(null);
   };
 
+  const handleReaction = (emoji: string) => {
+    if (!currentMember?.result?._id || isReactionPending) return;
+    createReaction({
+      messageId: id,
+      memberId: currentMember?.result?._id,
+      reaction: emoji,
+    });
+  };
   const formatFullTime = (date: Date) => {
     return `${isToday(date) ? "Today" : isYesterday(date) ? "Yesterday" : format(date, "MMM d, yyyy")} at ${format(new Date(createdAt), "hh:mm a")}`;
   };
@@ -79,6 +95,7 @@ const Message = ({
                 {updatedAt ? (
                   <p className="text-xs text-muted-foreground">(edited)</p>
                 ) : null}
+                <Reactions data={reaction} onChange={handleReaction} />
               </div>
             </div>
           )}
@@ -90,7 +107,7 @@ const Message = ({
               handleDelete={handleDelete}
               handleThread={() => {}}
               hideThreadButton={false}
-              handleReaction={() => {}}
+              handleReaction={handleReaction}
             />
           )}
         </div>
@@ -132,6 +149,7 @@ const Message = ({
                 <p className="text-xs text-muted-foreground">(edited)</p>
               ) : null}
               {image && <Thumbnail url={image} />}
+              <Reactions data={reaction} onChange={handleReaction} />
             </div>
           )}
         </div>
@@ -143,7 +161,7 @@ const Message = ({
             handleDelete={handleDelete}
             handleThread={() => {}}
             hideThreadButton={false}
-            handleReaction={() => {}}
+            handleReaction={handleReaction}
           />
         )}
       </div>

@@ -26,3 +26,18 @@ export const getById = query({
     return { success: true, result: populatedMembers, error: "" };
   },
 });
+export const getCurrentMember = query({
+  args: { workspaceId: v.string() },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return { success: false, result: [], error: "Unauthorized" };
+    const member = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id", (q) =>
+        q.eq("workspaceId", args.workspaceId)
+      )
+      .filter((q) => q.eq(q.field("userId"), userId))
+      .first();
+    return { success: true, result: member, error: "" };
+  },
+});
