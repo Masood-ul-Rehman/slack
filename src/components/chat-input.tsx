@@ -3,22 +3,25 @@ import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { toast } from "sonner";
 import Quill from "quill";
+import { Id } from "@/convex/_generated/dataModel";
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
 
 import { useCreateMessage } from "@/features/workspaces/api/messages/use-create-message";
 import { useGenerateUploadUrl } from "@/features/upload/api/use-generate-upload-url";
 
-const ChatInput = ({ placeholder }: { placeholder: string }) => {
+const ChatInput = ({
+  placeholder,
+  variant,
+  parentMessageId,
+}: {
+  placeholder?: string;
+  variant: "create" | "edit";
+  parentMessageId?: Id<"messages"> | null;
+}) => {
   const [editorKey, setEditorKey] = useState(0);
   const [pending, setPending] = useState(false);
   const { mutate } = useCreateMessage();
-  const {
-    mutate: generateUploadUrl,
-    isPending: isGeneratingUploadUrl,
-    isError: isErrorGeneratingUploadUrl,
-    isSuccess: isSuccessGeneratingUploadUrl,
-    data: uploadUrl,
-  } = useGenerateUploadUrl();
+  const { mutate: generateUploadUrl } = useGenerateUploadUrl();
 
   const editorRef = useRef<Quill | null>(null);
   const { id: workspaceId, channelId } = useParams<{
@@ -36,7 +39,13 @@ const ChatInput = ({ placeholder }: { placeholder: string }) => {
     editorRef.current?.enable(false);
     const sendMessage = (storageLink: string) =>
       mutate(
-        { workspaceId, channelId, body, image: storageLink },
+        {
+          workspaceId,
+          channelId,
+          body,
+          image: storageLink,
+          parentMessageId: parentMessageId ?? undefined,
+        },
         {
           onError(error) {
             toast.error(error.message || "Error sending message");
@@ -83,8 +92,8 @@ const ChatInput = ({ placeholder }: { placeholder: string }) => {
     <div className="px-5 w-full">
       <Editor
         key={editorKey}
-        variant="create"
-        placeholder="Type your message here..."
+        variant={variant}
+        placeholder={placeholder || "Type your message here..."}
         onSubmit={handleSubmit}
         disabled={pending}
         innerRef={editorRef}

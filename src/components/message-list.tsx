@@ -9,8 +9,6 @@ import { MessageListProps } from "@/features/workspaces/types";
 
 const TIME_THRESHOLD = 1;
 const MessageList = ({
-  memberName,
-  memberImage,
   channelName,
   channelCreatedAt,
   variant,
@@ -127,10 +125,12 @@ const MessageList = ({
           </span>
         </div>
       )}
-      <ChannelHero
-        channelName={channelName}
-        channelCreatedAt={channelCreatedAt}
-      />
+      {variant === "channel" && (
+        <ChannelHero
+          channelName={channelName}
+          channelCreatedAt={channelCreatedAt}
+        />
+      )}
     </div>
   );
 };

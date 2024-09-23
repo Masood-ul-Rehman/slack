@@ -35,6 +35,7 @@
     "lucide-react": "^0.436.0",
     "next": "14.2.7",
     "next-themes": "^0.3.0",
+    "nuqs": "^1.19.1",
     "quill": "^2.0.2",
     "react": "^18",
     "react-dom": "^18",

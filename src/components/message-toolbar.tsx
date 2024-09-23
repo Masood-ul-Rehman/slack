@@ -41,7 +41,10 @@ const MessageToolbar = ({
         <DropdownMenuContent className="mr-6">
           <DropdownMenuItem onClick={handleEdit}>Edit</DropdownMenuItem>
           <DropdownMenuItem
-            onClick={handleDelete}
+            onClick={() => {
+              setOpen(false);
+              handleDelete();
+            }}
             className="text-red-500 hover:bg-red-500 hover:text-white "
           >
             Delete
@@ -52,7 +55,7 @@ const MessageToolbar = ({
   };
   return (
     <>
-      <div className="opacity-0 group-hover:opacity-100 relative bg-white rounded-md p-1 bottom-6 border border-gray-200 max-w-[400px]  flex items-center justify-between gap-2">
+      <div className="opacity-0 group-hover:opacity-100 absolute right-4 bg-white rounded-md p-1 bottom-6 border border-gray-200 max-w-[400px]  flex items-center justify-between gap-2">
         <EmojiPopover
           hint="Add reaction"
           onEmojiSelect={(emoji: any) => {

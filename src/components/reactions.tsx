@@ -13,7 +13,7 @@ export const Reactions = ({ data, onChange }: ReactionsProps) => {
   const currentMember: any = useGetCurrentMember({ workspaceId });
   if (data.length === 0 || !currentMember.data?.result?._id) return null;
   return (
-    <div className="flex items-center gap-1 my-1">
+    <div className="flex flex-wrap items-center gap-1 my-1">
       {data.map((reaction) => (
         <Hint
           key={reaction._id}

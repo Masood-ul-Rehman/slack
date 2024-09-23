@@ -86,6 +86,7 @@ export const createMessage = mutation({
       workspaceId,
       channelId,
       conversationId: _conversationId,
+      parentMessageId: args.parentMessageId ?? undefined,
       memberId: member._id,
       body,
       image,
@@ -233,5 +234,54 @@ export const deleteMessage = mutation({
       throw new Error("Unauthorized");
     await ctx.db.delete(messageId);
     return { success: true, result: message, error: null };
+  },
+});
+export const getById = query({
+  args: {
+    messageId: v.id("messages"),
+  },
+  handler: async (ctx, args) => {
+    const { messageId } = args;
+    const message = await ctx.db.get(messageId);
+    if (!message) return null;
+    const member = await populateMember(ctx, message.memberId);
+    const user = await populateUser(ctx, message.userId);
+    if (!member || !user) return null;
+    const reactions = await populateReactions(ctx, message._id);
+
+    const image = message.image
+      ? await ctx.storage.getUrl(message.image)
+      : undefined;
+    const reactionWithCount = reactions.map((reaction) => {
+      return {
+        ...reaction,
+        count: reactions.filter((r) => r.reaction === reaction.reaction).length,
+      };
+    });
+    const groupedReactions = reactionWithCount.reduce(
+      (acc, reaction) => {
+        const existingReaction = acc.find(
+          (r) => r.reaction === reaction.reaction
+        );
+        if (existingReaction) {
+          existingReaction.memberIds.push(reaction.memberId);
+        } else {
+          acc.push({ ...reaction, memberIds: [reaction.memberId] });
+        }
+        return acc;
+      },
+      [] as (Doc<"reactions"> & {
+        count: number;
+        memberIds: Id<"members">[];
+      })[]
+    );
+
+    return {
+      ...message,
+      image,
+      member,
+      user,
+      reactions: groupedReactions,
+    };
   },
 });

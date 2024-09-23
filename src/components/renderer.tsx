@@ -1,11 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import Quill from "quill";
+import { usePanel } from "@/features/workspaces/hooks/use-panel";
 
 interface RendererProps {
   value: string;
+  variant: "channel" | "thread" | "conversation";
 }
 
-const Renderer = ({ value }: RendererProps) => {
+const Renderer = ({ value, variant }: RendererProps) => {
+  const { parentMessageId } = usePanel();
+  const isPanelOpen = !!parentMessageId;
   const [isEmpty, setIsEmpty] = useState(false);
   const rendererRef = useRef<HTMLDivElement>(null);
 
@@ -34,7 +38,20 @@ const Renderer = ({ value }: RendererProps) => {
   }, [value]);
 
   if (isEmpty) return null;
-  return <div ref={rendererRef} className="ql-editor ql-renderer" />;
+  return (
+    <div
+      ref={rendererRef}
+      className={`ql-editor ql-renderer w-full ${
+        variant === "thread"
+          ? "w-[20vw]"
+          : variant === "conversation"
+            ? "w-[400px]"
+            : isPanelOpen
+              ? "w-[calc(40vw-1rem)]"
+              : "w-[calc(60vw-1rem)]"
+      }`}
+    />
+  );
 };
 
 export default Renderer;

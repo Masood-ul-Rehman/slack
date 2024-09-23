@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Loader } from "lucide-react";
+import { Id } from "@/convex/_generated/dataModel";
 
 import {
   ResizableHandle,
@@ -11,13 +12,17 @@ import {
 import Sidebar from "./components/sidebar";
 import Searchbar from "./components/searchbar";
 import WorkplaceSideBar from "./components/workspace-sidebar";
+import ThreadPanel from "./components/thread-pannel";
+import { usePanel } from "@/features/workspaces/hooks/use-panel";
 import useWorkspaceId from "@/features/workspaces/hooks/use-workspace-Id";
 import { useGetWorkspaceById } from "@/features/workspaces/api/use-get-workspace-by-id";
 import { useRouter } from "next/navigation";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
-  const { workspaceId } = useWorkspaceId();
   const router = useRouter();
+  const { workspaceId } = useWorkspaceId();
+  const { parentMessageId, onCloseMessage } = usePanel();
+  const showPanel = !!parentMessageId;
   const { data: workspace, isLoading: workspaceLoading } = useGetWorkspaceById({
     id: workspaceId,
   });
@@ -51,6 +56,24 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <ResizablePanel minSize={20} defaultSize={50} className="bg-white">
               {children}
             </ResizablePanel>
+            {showPanel && (
+              <ResizablePanel
+                minSize={20}
+                defaultSize={29}
+                className="bg-white"
+              >
+                {parentMessageId ? (
+                  <ThreadPanel
+                    messageId={parentMessageId as Id<"messages">}
+                    onClose={onCloseMessage}
+                  />
+                ) : (
+                  <div className="flex justify-center items-center h-full">
+                    <Loader className="size-6 animate-spin text-black" />
+                  </div>
+                )}
+              </ResizablePanel>
+            )}
           </ResizablePanelGroup>
         </div>
       </div>

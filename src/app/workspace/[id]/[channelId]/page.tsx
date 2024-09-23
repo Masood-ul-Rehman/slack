@@ -2,7 +2,7 @@
 import React from "react";
 import { useParams } from "next/navigation";
 
-import ChatInput from "./components/chat-input";
+import ChatInput from "../../../../components/chat-input";
 import MessageList from "@/components/message-list";
 import { useGetChannelById } from "@/features/workspaces/api/channels/use-get-channel-by-id";
 import { useGetMessages } from "@/features/workspaces/api/messages/use-get-messages";
@@ -32,6 +32,7 @@ const ChannelPage = () => {
   return (
     <div className="h-[calc(100vh-8rem)]  flex flex-col">
       <MessageList
+        variant="channel"
         messages={messages}
         loadMore={loadMore}
         channelName={channel?.result?.name || "Channel"}
@@ -39,7 +40,7 @@ const ChannelPage = () => {
         isLoadingMore={status === "LoadingMore"}
         canLoadMore={true}
       />
-      <ChatInput placeholder={channel?.result?.name ?? "Channel"} />
+      <ChatInput variant="create" />
     </div>
   );
 };

@@ -14,6 +14,7 @@ import { useCreateReaction } from "@/features/workspaces/api/messages/use-create
 import { MessageProps } from "@/features/workspaces/types";
 import useWorkspaceId from "@/features/workspaces/hooks/use-workspace-Id";
 import { useGetCurrentMember } from "@/features/workspaces/api/members/use-current-member";
+import { usePanel } from "@/features/workspaces/hooks/use-panel";
 const Renderer = dynamic(() => import("./renderer"), { ssr: false });
 const Editor = dynamic(() => import("./editor"), { ssr: false });
 
@@ -38,6 +39,7 @@ const Message = ({
   isCompact,
 }: MessageProps) => {
   const { workspaceId } = useWorkspaceId();
+  const { onOpenMessage, onCloseMessage, parentMessageId } = usePanel();
   const { data: currentMember }: any = useGetCurrentMember({ workspaceId });
   const { mutate: deleteMessage } = useDeleteMessage();
   const { mutate: editMessage, isPending: isEditPending } = useEditMessage();
@@ -45,6 +47,9 @@ const Message = ({
     useCreateReaction();
   const handleDelete = () => {
     deleteMessage({ messageId: id });
+    if (parentMessageId === id) {
+      onCloseMessage();
+    }
   };
 
   const handleUpdate = (body: string) => {
@@ -67,11 +72,11 @@ const Message = ({
     return (
       <div
         className={cn(
-          "flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-100/60 group relative cursor-pointer w-full",
+          "flex flex-col gap-2 p-1.5 px-5 hover:bg-gray-100/60 group relative cursor-pointer w-full ",
           isEditing && "bg-[#f2c74433] hover:bg-[f2c74433]"
         )}
       >
-        <div className="flex justify-between items-start gap-4">
+        <div className="flex  items-start gap-4">
           {isEditing ? (
             <div className="w-full h-full">
               <Editor
@@ -83,14 +88,14 @@ const Message = ({
               />
             </div>
           ) : (
-            <div className="flex items-start gap-4">
+            <div className="flex items-start gap-4 w-full">
               <Hint label={formatFullTime(new Date(createdAt))}>
                 <button className="text-[10px] text-muted-foreground opacity-0 group-hover:opacity-100 w-fit text-center pt-[4px]">
                   {format(new Date(createdAt), "hh:mm a")}
                 </button>
               </Hint>
               <div className="flex flex-col gap-1">
-                <Renderer value={body} />
+                <Renderer value={body} variant={variant} />
                 {image && <Thumbnail url={image} />}
                 {updatedAt ? (
                   <p className="text-xs text-muted-foreground">(edited)</p>
@@ -105,8 +110,8 @@ const Message = ({
               isPending={false}
               handleEdit={() => setEditingId(id)}
               handleDelete={handleDelete}
-              handleThread={() => {}}
-              hideThreadButton={false}
+              handleThread={() => onOpenMessage(id)}
+              hideThreadButton={variant === "thread"}
               handleReaction={handleReaction}
             />
           )}
@@ -121,7 +126,7 @@ const Message = ({
         isEditing && "bg-[#f2c74433] hover:bg-[f2c74433]"
       )}
     >
-      <div className="flex justify-between items-start gap-4">
+      <>
         <div className="flex items-start gap-4 w-full">
           <WorkspaceAvatar img={authorImage} name={authorName} />
           {isEditing ? (
@@ -135,7 +140,7 @@ const Message = ({
               />
             </div>
           ) : (
-            <div className="flex flex-col gap-[2px]">
+            <div className="flex flex-col gap-[2px] w-full">
               <div className="flex items-center gap-2">
                 <h2 className="text-md font-bold">{authorName}</h2>
                 <Hint label={formatFullTime(new Date(createdAt))}>
@@ -144,7 +149,7 @@ const Message = ({
                   </button>
                 </Hint>
               </div>
-              <Renderer value={body} />
+              <Renderer value={body} variant={variant} />
               {updatedAt ? (
                 <p className="text-xs text-muted-foreground">(edited)</p>
               ) : null}
@@ -159,12 +164,12 @@ const Message = ({
             isPending={false}
             handleEdit={() => setEditingId(id)}
             handleDelete={handleDelete}
-            handleThread={() => {}}
-            hideThreadButton={false}
+            handleThread={() => onOpenMessage(id)}
+            hideThreadButton={variant === "thread"}
             handleReaction={handleReaction}
           />
         )}
-      </div>
+      </>
     </div>
   );
 };

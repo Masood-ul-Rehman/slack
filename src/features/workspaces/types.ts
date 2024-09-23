@@ -48,17 +48,15 @@ export interface MessageProps {
   threadImage?: string | null | undefined;
   threadTimeStamp?: number;
   channelCreatedAt?: Date | undefined;
-  variant?: "channel" | "thread" | "conversation";
+  variant: "channel" | "thread" | "conversation";
   isCompact: boolean;
   updatedAt: Doc<"messages">["updatedAt"];
   createdAt: Doc<"messages">["_creationTime"];
 }
 export interface MessageListProps {
-  memberName?: string;
-  memberImage?: string;
   channelName?: string;
   channelCreatedAt?: Date;
-  variant?: "channel" | "thread" | "conversation";
+  variant: "channel" | "thread" | "conversation";
   messages: GetMessagesReturnType | undefined;
   loadMore: () => void;
   isLoadingMore: boolean;
