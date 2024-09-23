@@ -45,7 +45,27 @@ const MessageList = ({
       },
       {} as Record<string, typeof messages>
     );
-
+  const LoadMoreMessages = () => {
+    return (
+      <div
+        className="h-1 "
+        ref={(el) => {
+          if (el) {
+            const observer = new IntersectionObserver(
+              ([entry]) => {
+                if (entry.isIntersecting && canLoadMore) {
+                  loadMore();
+                }
+              },
+              { threshold: 1.0 }
+            );
+            observer.observe(el);
+            return () => observer.disconnect();
+          }
+        }}
+      />
+    );
+  };
   return (
     <div className="flex h-full flex-col-reverse pb-4 overflow-y-auto messages-scrollbar">
       {messages &&
@@ -100,23 +120,7 @@ const MessageList = ({
             })}
           </div>
         ))}
-      <div
-        className="h-1 "
-        ref={(el) => {
-          if (el) {
-            const observer = new IntersectionObserver(
-              ([entry]) => {
-                if (entry.isIntersecting && canLoadMore) {
-                  loadMore();
-                }
-              },
-              { threshold: 1.0 }
-            );
-            observer.observe(el);
-            return () => observer.disconnect();
-          }
-        }}
-      />
+      <LoadMoreMessages />
       {isLoadingMore && (
         <div className="text-center my-2 relative ">
           <hr className="absolute  left-0 right-0 border-t border-gray-300" />

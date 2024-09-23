@@ -53,7 +53,7 @@ const ThreadPanel = ({
         </div>
       )}
       {messageLoading ? (
-        <div className="h-full flex flex-col gap-4 justify-center items-center">
+        <div className="h-full flex  flex-col-reverse gap-4 justify-center items-center">
           <Loader className="size-6 animate-spin text-black" />
         </div>
       ) : (
@@ -76,6 +76,7 @@ const ThreadPanel = ({
           />
         </div>
       )}
+      <div className="w-full h-1 border-b border-gray-200 mb-6" />
       <MessageList
         variant="thread"
         messages={threadMessages}
@@ -85,9 +86,7 @@ const ThreadPanel = ({
         channelName={message?.channelId}
         channelCreatedAt={new Date(message?._creationTime!)}
       />
-      <div className="px-4">
-        <ChatInput variant="create" parentMessageId={messageId} />
-      </div>
+      <ChatInput variant="create" parentMessageId={messageId} />
     </div>
   );
 };

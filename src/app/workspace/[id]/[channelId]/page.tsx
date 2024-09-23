@@ -30,7 +30,7 @@ const ChannelPage = () => {
     );
 
   return (
-    <div className="h-[calc(100vh-8rem)]  flex flex-col">
+    <div className="h-[calc(100vh-7rem)]  flex flex-col">
       <MessageList
         variant="channel"
         messages={messages}
