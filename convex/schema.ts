@@ -31,6 +31,7 @@ const schema = defineSchema({
     .index("by_workspace_id_status", ["workspaceId", "status"])
     .index("by_workspace_id", ["workspaceId"])
     .index("by_workspace_id_channel_id", ["workspaceId", "channelId"]),
+
   conversations: defineTable({
     workspaceId: v.string(),
     initiatorId: v.id("members"),
