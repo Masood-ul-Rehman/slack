@@ -6,7 +6,7 @@ export const useGetWorkspaceMembers = ({
 }: {
   workspaceId: string;
 }) => {
-  const data = useQuery(api.members.getById, { workspaceId });
+  const data = useQuery(api.members.getByWorkspaceId, { workspaceId });
   const isLoading = data === undefined;
   return { isLoading, data };
 };

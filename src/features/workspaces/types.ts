@@ -1,5 +1,8 @@
 import { z } from "zod";
 import { Id, Doc } from "@/convex/_generated/dataModel";
+import { Delta, Op } from "quill/core";
+import Quill from "quill";
+
 import { GetMessagesReturnType } from "@/features/workspaces/api/messages/use-get-messages";
 
 export const createWorkspaceItemsSchema = z.object({
@@ -54,8 +57,8 @@ export interface MessageProps {
   createdAt: Doc<"messages">["_creationTime"];
 }
 export interface MessageListProps {
-  channelName?: string;
-  channelCreatedAt?: Date;
+  Name?: string;
+  CreatedAt?: Date;
   variant: "channel" | "thread" | "conversation";
   messages: GetMessagesReturnType | undefined;
   loadMore: () => void;
@@ -71,4 +74,17 @@ export interface ReactionsProps {
   >;
 
   onChange: (reaction: string) => void;
+}
+type EditorSubmit = {
+  image: File | null;
+  body: string;
+};
+export interface EditorProps {
+  variant?: "create" | "edit";
+  onSubmit: (data: EditorSubmit) => void;
+  onCancel?: () => void;
+  placeholder?: string;
+  defaultValue?: Delta | Op[];
+  disabled?: boolean;
+  innerRef?: React.MutableRefObject<Quill | null>;
 }

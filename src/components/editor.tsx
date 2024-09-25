@@ -1,10 +1,8 @@
 import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
-import Image from "next/image";
 import Quill from "quill";
-import { Delta, Op } from "quill/core";
-import "quill/dist/quill.snow.css";
+import Image from "next/image";
 import { PiTextAa } from "react-icons/pi";
-import { MdSend, MdCancel, MdCheck, MdOutlineCancel } from "react-icons/md";
+import { MdSend, MdCancel, MdCheck } from "react-icons/md";
 import { ImageIcon, Smile, XIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -12,19 +10,9 @@ import { Button } from "./ui/button";
 import Hint from "./hint";
 import EmojiPopover from "./emoji-popover";
 
-type EditorSubmit = {
-  image: File | null;
-  body: string;
-};
-interface EditorProps {
-  variant?: "create" | "edit";
-  onSubmit?: (data: EditorSubmit) => void;
-  onCancel?: () => void;
-  placeholder?: string;
-  defaultValue?: Delta | Op[];
-  disabled?: boolean;
-  innerRef?: React.MutableRefObject<Quill | null>;
-}
+import "quill/dist/quill.snow.css";
+import { EditorProps } from "@/features/workspaces/types";
+
 const Editor = ({
   variant = "create",
   onSubmit,

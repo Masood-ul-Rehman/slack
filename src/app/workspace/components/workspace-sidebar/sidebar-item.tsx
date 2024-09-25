@@ -10,7 +10,7 @@ const sidebarVariants = cva(
     variants: {
       variant: {
         default: "",
-        active: "bg-[#f9edff] opacity-70  text-[#644673]",
+        active: "bg-accent/20   text-white",
       },
     },
   }

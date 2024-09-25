@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
@@ -10,24 +10,17 @@ import SidebarItem from "../sidebar-item";
 import ChannelDropdown from "./channel-dropdown";
 import { useGetChannelsByWorkspaceId } from "@/features/workspaces/api/channels/use-get-channels";
 import UseGetWorkspaceId from "@/features/workspaces/hooks/use-workspace-Id";
-import { useSetChannel } from "@/features/workspaces/store/use-set-channel";
 import { useOpenCreateChannelModal } from "@/features/workspaces/store/use-open-crete-channel-modal";
 
 const Channels = () => {
-  let [activeChannel, setActiveChannel] = useSetChannel();
+  const { channelId } = useParams();
   const [showChannels, setShowChannels] = useState(true);
   const [_openCreateChannelModal, setOpenCreateChannelModal] =
     useOpenCreateChannelModal();
   const { workspaceId } = UseGetWorkspaceId();
-  const { channelId } = useParams();
   const { data: channels, isLoading } = useGetChannelsByWorkspaceId({
     id: workspaceId,
   });
-  useEffect(() => {
-    if (channelId) {
-      setActiveChannel(channelId as string);
-    }
-  }, [channelId, setActiveChannel]);
 
   if (isLoading)
     return (
@@ -36,7 +29,7 @@ const Channels = () => {
         <p className="text-sm text-white font-medium">Loading channels...</p>
       </div>
     );
-  useEffect;
+
   return (
     <div className="flex flex-col gap-2 mt-4">
       <div className="flex items-center gap-1 px-3">
@@ -60,15 +53,12 @@ const Channels = () => {
           <Link
             key={channel.channelId}
             href={`/workspace/${workspaceId}/${channel.channelId}`}
-            onClick={() => setActiveChannel(channel.channelId)}
           >
             <SidebarItem
               icon={<Hash size={16} />}
               label={channel.name}
               link={`/workspace/${workspaceId}/${channel.channelId}`}
-              variant={
-                activeChannel === channel.channelId ? "active" : "default"
-              }
+              variant={channelId === channel.channelId ? "active" : "default"}
             />
           </Link>
         ))}

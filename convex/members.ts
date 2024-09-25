@@ -5,7 +5,18 @@ import { Id } from "./_generated/dataModel";
 const populateUser = (ctx: QueryCtx, id: Id<"users">) => {
   return ctx.db.get(id);
 };
-export const getById = query({
+export const getByMemberId = query({
+  args: { memberId: v.id("members") },
+  handler: async (ctx, args) => {
+    const member = await ctx.db.get(args.memberId);
+    if (!member)
+      return { success: false, result: [], error: "Member not found" };
+    const user = await populateUser(ctx, member.userId);
+    if (!user) return { success: false, result: [], error: "User not found" };
+    return { success: true, result: { ...member, user }, error: "" };
+  },
+});
+export const getByWorkspaceId = query({
   args: { workspaceId: v.string() },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);

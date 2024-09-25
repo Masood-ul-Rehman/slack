@@ -13,11 +13,14 @@ const ChatInput = ({
   placeholder,
   variant,
   parentMessageId,
+  conversationId,
 }: {
   placeholder?: string;
   variant: "create" | "edit";
   parentMessageId?: Id<"messages"> | null;
+  conversationId?: Id<"conversations"> | null;
 }) => {
+  console.log(conversationId, "conversationId");
   const [editorKey, setEditorKey] = useState(0);
   const [pending, setPending] = useState(false);
   const { mutate } = useCreateMessage();
@@ -45,6 +48,7 @@ const ChatInput = ({
           body,
           image: storageLink,
           parentMessageId: parentMessageId ?? undefined,
+          conversationId: conversationId ?? undefined,
         },
         {
           onError(error) {
@@ -75,7 +79,6 @@ const ChatInput = ({
               body: image,
             });
             if (result.ok) {
-              console.log("ok", result);
               const { storageId } = await result.json();
               if (storageId) {
                 sendMessage(storageId);

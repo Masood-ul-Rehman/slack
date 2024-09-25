@@ -83,8 +83,8 @@ const ThreadPanel = ({
         loadMore={loadMoreThreadMessages}
         canLoadMore={canLoadMore}
         isLoadingMore={isLoadingMore}
-        channelName={message?.channelId}
-        channelCreatedAt={new Date(message?._creationTime!)}
+        Name={message?.channelId}
+        CreatedAt={new Date(message?._creationTime!)}
       />
       <ChatInput variant="create" parentMessageId={messageId} />
     </div>

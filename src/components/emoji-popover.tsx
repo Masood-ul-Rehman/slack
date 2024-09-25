@@ -55,11 +55,7 @@ const EmojiPopover = ({
           className="p-0  w-full border-none shadow-none relative bottom-12 left-28"
           align="center"
         >
-          <Picker
-            data={data}
-            onEmojiSelect={onSelect}
-            onClickOutside={() => console.log("Clicked outside")}
-          />
+          <Picker data={data} onEmojiSelect={onSelect} />
         </PopoverContent>
       </Popover>
     </TooltipProvider>

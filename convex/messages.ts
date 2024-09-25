@@ -56,7 +56,7 @@ export const getMember = query({
 export const createMessage = mutation({
   args: {
     workspaceId: v.string(),
-    channelId: v.string(),
+    channelId: v.optional(v.string()),
     body: v.string(),
     image: v.optional(v.string()),
     parentMessageId: v.optional(v.id("messages")),
@@ -106,11 +106,10 @@ export const get = query({
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Unauthorized");
-
     const { channelId, paginationOpts, parentMessageId } = args;
     let _conversationId = args.conversationId;
-
     if (!args.conversationId && !args.channelId && args.parentMessageId) {
+      console.log("parentMessageId", args.parentMessageId);
       const parentMessage = await ctx.db.get(args.parentMessageId);
       if (!parentMessage) {
         throw new Error("Parent message not found");
@@ -128,6 +127,7 @@ export const get = query({
       )
       .order("desc")
       .paginate(paginationOpts);
+
     return {
       ...result,
       page: await Promise.all(

@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
 export const createOrGetConversation = mutation({
@@ -18,52 +18,42 @@ export const createOrGetConversation = mutation({
       .withIndex("by_workspace_id_and_user_id", (q) =>
         q.eq("workspaceId", workspaceId).eq("userId", userId)
       )
-      .first();
+      .unique();
 
     if (!member) return { success: false, result: null, error: "Unauthorized" };
 
-    const initiatorId = member?._id;
+    const initiatorId = member._id;
 
     const existingConversation = await ctx.db
       .query("conversations")
+      .filter((q) => q.eq(q.field("workspaceId"), workspaceId))
       .filter((q) =>
         q.or(
           q.and(
-            q.eq("workspaceId", workspaceId),
-            q.eq(q.field("initiatorId"), initiatorId)
+            q.eq(q.field("initiatorId"), initiatorId),
+            q.eq(q.field("receiverId"), receiverId)
           ),
           q.and(
-            q.eq("workspaceId", workspaceId),
-            q.eq(q.field("receiverId"), receiverId)
+            q.eq(q.field("initiatorId"), receiverId),
+            q.eq(q.field("receiverId"), initiatorId)
           )
         )
       )
-      .unique();
-    if (existingConversation)
-      return { success: true, result: existingConversation, error: null };
-
-    const newConversation = await ctx.db.insert("conversations", {
-      workspaceId: workspaceId,
-      initiatorId: initiatorId,
-      receiverId: receiverId,
-      updatedAt: Date.now(),
-    });
-    if (!newConversation)
-      return {
-        success: false,
-        result: null,
-        error: "Failed to create conversation",
-      };
-    const conversation = await ctx.db
-      .query("conversations")
-      .withIndex("by_id", (q) => q.eq("_id", newConversation))
       .first();
-    if (!conversation)
-      return {
-        success: false,
-        result: null,
-        error: "Failed to get conversation",
-      };
-    return { success: true, result: conversation, error: null };
+    console.log(existingConversation, "existingConversation");
+    if (existingConversation) {
+      console.log("conversation already exists");
+      return { success: true, result: existingConversation._id, error: null };
+    }
+
+    // // Use insert if not exists to prevent race conditions
+    // const newConversationId = await ctx.db.insert("conversations", {
+    //   workspaceId,
+    //   initiatorId,
+    //   receiverId,
+    //   updatedAt: Date.now(),
+    // });
+
+    // return { success: true, result: newConversationId, error: null };
   },
 });

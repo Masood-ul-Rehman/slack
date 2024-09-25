@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { FaCaretDown } from "react-icons/fa";
+
 import { Button } from "@/components/ui/button";
 import { Plus } from "@phosphor-icons/react";
 import { useGetWorkspaceMembers } from "@/features/workspaces/api/members/use-get-members-by-workspace-id";
@@ -8,6 +10,7 @@ import useWorkspaceId from "@/features/workspaces/hooks/use-workspace-Id";
 import WorkspaceAvatar from "@/components/workspace-avater";
 
 const Members = () => {
+  const { memberId } = useParams();
   const { workspaceId } = useWorkspaceId();
   const { data: members, isLoading } = useGetWorkspaceMembers({
     workspaceId,
@@ -47,7 +50,11 @@ const Members = () => {
               href={`/workspace/${workspaceId}/member/${member._id}`}
               key={member._id}
             >
-              <div className="flex items-center gap-4 hover:bg-accent/20 rounded-md p-1 cursor-pointer px-2">
+              <div
+                className={`flex items-center gap-4 hover:bg-accent/20 rounded-md p-1 cursor-pointer px-2 ${
+                  memberId === member._id ? "bg-accent/20" : ""
+                }`}
+              >
                 <WorkspaceAvatar
                   img={member.user.image}
                   name={member.user.name}

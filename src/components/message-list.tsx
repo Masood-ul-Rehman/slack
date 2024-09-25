@@ -9,8 +9,8 @@ import { MessageListProps } from "@/features/workspaces/types";
 
 const TIME_THRESHOLD = 1;
 const MessageList = ({
-  channelName,
-  channelCreatedAt,
+  Name,
+  CreatedAt,
   variant,
   messages,
   loadMore,
@@ -89,7 +89,7 @@ const MessageList = ({
               const previousMessage = messages[messages.indexOf(message) - 1];
               const isCompact =
                 previousMessage &&
-                previousMessage.user.id === message.user.id &&
+                previousMessage.memberId === message.memberId &&
                 differenceInMinutes(
                   new Date(message._creationTime),
                   new Date(previousMessage._creationTime)
@@ -113,7 +113,6 @@ const MessageList = ({
                   threadCount={messages.threadCount}
                   threadImage={messages.threadImage}
                   threadTimeStamp={messages.threadTimeStamp}
-                  channelCreatedAt={channelCreatedAt}
                   variant={variant}
                 />
               );
@@ -130,10 +129,7 @@ const MessageList = ({
         </div>
       )}
       {variant === "channel" && (
-        <ChannelHero
-          channelName={channelName}
-          channelCreatedAt={channelCreatedAt}
-        />
+        <ChannelHero channelName={Name} channelCreatedAt={CreatedAt} />
       )}
     </div>
   );

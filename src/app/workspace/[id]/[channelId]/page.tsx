@@ -2,7 +2,7 @@
 import React from "react";
 import { useParams } from "next/navigation";
 
-import ChatInput from "../../../../components/chat-input";
+import ChatInput from "@/components/chat-input";
 import MessageList from "@/components/message-list";
 import { useGetChannelById } from "@/features/workspaces/api/channels/use-get-channel-by-id";
 import { useGetMessages } from "@/features/workspaces/api/messages/use-get-messages";
@@ -35,8 +35,8 @@ const ChannelPage = () => {
         variant="channel"
         messages={messages}
         loadMore={loadMore}
-        channelName={channel?.result?.name || "Channel"}
-        channelCreatedAt={new Date(channel?.result?._creationTime ?? 0)}
+        Name={channel?.result?.name || "Channel"}
+        CreatedAt={new Date(channel?.result?._creationTime ?? 0)}
         isLoadingMore={status === "LoadingMore"}
         canLoadMore={true}
       />
