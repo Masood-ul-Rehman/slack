@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { differenceInMinutes, format, isToday, isYesterday } from "date-fns";
 import { Loader } from "lucide-react";
+import { Id } from "@/convex/_generated/dataModel";
 
 import Message from "./message";
 import ChannelHero from "./channel-hero";
+import ConversationHeader from "../app/workspace/[id]/member/components/conversation-header";
 import { useGetSession } from "@/features/users/api/use-get-session";
 import { MessageListProps } from "@/features/workspaces/types";
 
@@ -16,6 +18,7 @@ const MessageList = ({
   loadMore,
   isLoadingMore,
   canLoadMore,
+  memberId,
 }: MessageListProps) => {
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const formatDateLabel = (date: string) => {

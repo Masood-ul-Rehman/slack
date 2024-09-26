@@ -40,6 +40,9 @@ const ChatInput = ({
   }) => {
     setPending(true);
     editorRef.current?.enable(false);
+    if (!conversationId && !parentMessageId && !channelId) {
+      return toast.error("Please select a channel or conversation");
+    }
     const sendMessage = (storageLink: string) =>
       mutate(
         {

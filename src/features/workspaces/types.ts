@@ -64,6 +64,7 @@ export interface MessageListProps {
   loadMore: () => void;
   isLoadingMore: boolean;
   canLoadMore: boolean;
+  memberId?: Id<"members">;
 }
 export interface ReactionsProps {
   data: Array<

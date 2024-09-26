@@ -1,43 +1,32 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { Loader } from "lucide-react";
 import { Id } from "@/convex/_generated/dataModel";
 
 import Conversation from "../components/conversation";
+import ConversationHeader from "@/app/workspace/[id]/member/components/conversation-header";
 import { useCreateOrGetConverstations } from "@/features/workspaces/api/conversationns/use-create-get-conversation";
+import { useGetMemberById } from "@/features/workspaces/api/members/use-get-member-by-id";
 
 const Member = () => {
   const { id, memberId } = useParams();
   const { mutate, isPending, data, isError } = useCreateOrGetConverstations();
-  const [conversationId, setConversationId] =
-    useState<Id<"conversations"> | null>(null);
-  const hasCalledRef = useRef(false);
+  const { data: memberData, isLoading: isMemberLoading } = useGetMemberById({
+    memberId: memberId as Id<"members">,
+  });
 
+  const createOrGetConversion = useCallback(() => {
+    mutate({
+      workspaceId: id as Id<"workspaces">,
+      receiverId: memberId as Id<"members">,
+    });
+  }, [mutate, id, memberId]);
   useEffect(() => {
-    if (hasCalledRef.current) return;
-
-    const createOrGetConversion = () => {
-      mutate({
-        workspaceId: id as Id<"workspaces">,
-        receiverId: memberId as Id<"members">,
-      });
-    };
-
     createOrGetConversion();
-    if (data?.result) {
-      setConversationId(data.result as Id<"conversations">);
-    }
-    hasCalledRef.current = true;
-    console.log("ended");
-  }, [id, memberId, mutate, data]);
+  }, [createOrGetConversion]);
 
-  // useEffect(() => {
-  //   hasCalledRef.current = false;
-  // }, [memberId]);
-
-  console.log(data, isPending, isError, "data");
-  if (isPending) {
+  if (isPending || isMemberLoading) {
     return (
       <div className="flex flex-col gap-4 h-full justify-center items-center">
         <Loader className="size-5 animate-spin transition-all duration-300" />
@@ -49,8 +38,25 @@ const Member = () => {
   if (data?.error) {
     return <div>Error: {data.error}</div>;
   }
+  if (data?.result === undefined) {
+    return null;
+  }
   return (
-    <Conversation conversationId={conversationId as Id<"conversations">} />
+    <>
+      <ConversationHeader
+        memberName={
+          Array.isArray(memberData?.result)
+            ? ""
+            : memberData?.result?.user?.name ?? ""
+        }
+        img={
+          Array.isArray(memberData?.result)
+            ? ""
+            : memberData?.result?.user?.image ?? ""
+        }
+      />
+      <Conversation conversationId={data?.result as Id<"conversations">} />
+    </>
   );
 };
 

@@ -39,21 +39,23 @@ export const createOrGetConversation = mutation({
           )
         )
       )
-      .first();
-    console.log(existingConversation, "existingConversation");
+      .unique();
+
     if (existingConversation) {
-      console.log("conversation already exists");
-      return { success: true, result: existingConversation._id, error: null };
+      return {
+        success: true,
+        result: existingConversation._id,
+        error: null,
+      };
     }
 
-    // // Use insert if not exists to prevent race conditions
-    // const newConversationId = await ctx.db.insert("conversations", {
-    //   workspaceId,
-    //   initiatorId,
-    //   receiverId,
-    //   updatedAt: Date.now(),
-    // });
-
-    // return { success: true, result: newConversationId, error: null };
+    // Use insert if not exists to prevent race conditions
+    const newConversationId = await ctx.db.insert("conversations", {
+      workspaceId,
+      initiatorId,
+      receiverId,
+      updatedAt: Date.now(),
+    });
+    return { success: true, result: newConversationId, error: null };
   },
 });
