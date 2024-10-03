@@ -27,7 +27,7 @@ const SidebarItem = ({
   label: string;
   link: string;
   variant?: "default" | "active";
-  channelNotifications: any;
+  channelNotifications?: any;
 }) => {
   return (
     <Button variant="ghost" className={cn(sidebarVariants({ variant }))}>
