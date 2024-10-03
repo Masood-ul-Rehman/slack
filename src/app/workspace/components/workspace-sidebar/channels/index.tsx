@@ -6,20 +6,15 @@ import { Loader } from "lucide-react";
 import { FaCaretDown } from "react-icons/fa";
 import { Hash, Plus } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import SidebarItem from "../sidebar-item";
 import ChannelDropdown from "./channel-dropdown";
 import { useGetChannelsByWorkspaceId } from "@/features/workspaces/api/channels/use-get-channels";
 import UseGetWorkspaceId from "@/features/workspaces/hooks/use-workspace-Id";
 import { useOpenCreateChannelModal } from "@/features/workspaces/store/use-open-crete-channel-modal";
 import { useGetUserNotifications } from "@/features/notifications/api/get-user-notifications";
-import { useGetCurrentMember } from "@/features/workspaces/api/members/use-current-member";
-import { Id } from "@/convex/_generated/dataModel";
-import { useReadNotification } from "@/features/notifications/api/use-read-notification";
 
 const Channels = () => {
   const { id, channelId } = useParams();
-  const { data: user } = useGetCurrentMember({ workspaceId: id as string });
   const [showChannels, setShowChannels] = useState(true);
   const [_openCreateChannelModal, setOpenCreateChannelModal] =
     useOpenCreateChannelModal();
@@ -30,12 +25,11 @@ const Channels = () => {
 
   const { data: notifications } = useGetUserNotifications({
     workspaceId,
-    memberId: (user?.result as any)?._id as Id<"members">,
   });
-  const { mutate: readNotification } = useReadNotification();
   const channelNotifications = (id: string) => {
     return notifications?.filter(
-      (notification) => notification.channelId === id && !notification.read
+      (notification) =>
+        notification.channelId === id && notification.read === false
     );
   };
 

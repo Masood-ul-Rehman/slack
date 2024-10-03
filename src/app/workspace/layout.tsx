@@ -32,7 +32,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   });
   const { data: notifications } = useGetUserNotifications({
     workspaceId,
-    memberId: (user?.result as any)?._id as Id<"members">,
   });
   const showPanel = !!parentMessageId;
   const { data: workspace, isLoading: workspaceLoading } = useGetWorkspaceById({

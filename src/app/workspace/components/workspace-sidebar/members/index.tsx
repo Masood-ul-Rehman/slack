@@ -9,9 +9,7 @@ import { useGetWorkspaceMembers } from "@/features/workspaces/api/members/use-ge
 import useWorkspaceId from "@/features/workspaces/hooks/use-workspace-Id";
 import WorkspaceAvatar from "@/components/workspace-avater";
 import { useGetUserNotifications } from "@/features/notifications/api/get-user-notifications";
-import { Id } from "@/convex/_generated/dataModel";
 import { Badge } from "@/components/ui/badge";
-import { useGetCurrentMember } from "@/features/workspaces/api/members/use-current-member";
 
 const Members = () => {
   const { memberId } = useParams();
@@ -20,15 +18,16 @@ const Members = () => {
     workspaceId,
   });
   const [showMembers, setShowMembers] = useState(false);
-  const { data: user } = useGetCurrentMember({ workspaceId });
 
   const { data: notifications } = useGetUserNotifications({
     workspaceId,
-    memberId: memberId as Id<"members">,
   });
   const memberNotifications = (id: string) => {
     return notifications?.filter(
-      (notification) => notification.notificationFrom === id
+      (notification) =>
+        notification.notificationFrom === id &&
+        notification.read === false &&
+        notification.conversationId
     );
   };
   return (
@@ -80,15 +79,11 @@ const Members = () => {
                     {member.user.name}
                   </h4>
                 </div>
-                {notification &&
-                  notification?.length > 0 &&
-                  notification.some(
-                    (notification: any) => !notification.read
-                  ) && (
-                    <Badge className="bg-accent/30 text-accent">
-                      {notification?.length > 9 ? `9+` : notification?.length}
-                    </Badge>
-                  )}
+                {notification && notification?.length > 0 && (
+                  <Badge className="bg-accent/30 text-accent">
+                    {notification?.length > 9 ? `9+` : notification?.length}
+                  </Badge>
+                )}
               </Link>
             );
           })}

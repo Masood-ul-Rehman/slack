@@ -52,7 +52,7 @@ export const getNotifications = query({
       .filter((q) => q.eq(q.field("userId"), userId))
       .first();
     if (!member) {
-      throw new Error("Member not found");
+      return [];
     }
     const notifications = await ctx.db
       .query("notifications")
