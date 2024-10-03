@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Lato } from "next/font/google";
+import { Inter } from "next/font/google";
 
 import { Toaster } from "sonner";
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
@@ -10,7 +10,7 @@ import Models from "@/components/models";
 
 import "./globals.css";
 
-const inter = Lato({
+const inter = Inter({
   weight: ["100", "300", "400", "700", "900"],
   subsets: ["latin"],
 });
