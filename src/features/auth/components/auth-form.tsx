@@ -41,7 +41,6 @@ const AuthForm = ({ type }: AuthFormProps) => {
   const { data, isLoading } = useGetWorkspaces();
   const [text, setText] = useState({
     title: "",
-    description: "",
     button: "",
     footer: "",
     footerLink: "",
@@ -74,7 +73,6 @@ const AuthForm = ({ type }: AuthFormProps) => {
     if (type == "signIn") {
       setText({
         title: "Sign in to your account",
-        description: "Enter your email below to sign in",
         button: "Sign in",
         footer: " New to slack? Signup instead",
         footerLink: "/auth/signup",
@@ -82,7 +80,6 @@ const AuthForm = ({ type }: AuthFormProps) => {
     } else {
       setText({
         title: "Create an account",
-        description: "Enter your email below to create your account",
         button: "Create account",
         footer: "Already have an account? Sign in instead",
         footerLink: "/auth/signin",
@@ -94,7 +91,6 @@ const AuthForm = ({ type }: AuthFormProps) => {
     <Card className="w-full max-w-md">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl font-bold">{text.title}</CardTitle>
-        <CardDescription>{text.description}</CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-4">
@@ -122,7 +118,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
             Google
           </Button>
         </div>
-        <div className="relative">
+        {/* <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t" />
           </div>
@@ -131,8 +127,8 @@ const AuthForm = ({ type }: AuthFormProps) => {
               Or continue with
             </span>
           </div>
-        </div>
-        <Form {...form}>
+        </div> */}
+        {/* <Form {...form}>
           <form
             className="flex flex-col gap-4"
             onSubmit={form.handleSubmit(onPasswordSignin)}
@@ -201,14 +197,14 @@ const AuthForm = ({ type }: AuthFormProps) => {
               {text.button}
             </Button>
           </form>
-        </Form>
-        {
+        </Form> */}
+        {/* {
           <Link href={text.footerLink}>
             <h4 className="text-center text-xs font-medium hover:underline mt-3 text-gray-600">
               {text.footer}
             </h4>
           </Link>
-        }
+        } */}
       </CardContent>
     </Card>
   );
