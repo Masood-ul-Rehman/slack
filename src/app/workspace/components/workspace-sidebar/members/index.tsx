@@ -80,11 +80,15 @@ const Members = () => {
                     {member.user.name}
                   </h4>
                 </div>
-                {notification && notification?.length > 0 && (
-                  <Badge className="bg-accent/30 text-accent">
-                    {notification?.length > 9 ? `9+` : notification?.length}
-                  </Badge>
-                )}
+                {notification &&
+                  notification?.length > 0 &&
+                  notification.some(
+                    (notification: any) => !notification.read
+                  ) && (
+                    <Badge className="bg-accent/30 text-accent">
+                      {notification?.length > 9 ? `9+` : notification?.length}
+                    </Badge>
+                  )}
               </Link>
             );
           })}

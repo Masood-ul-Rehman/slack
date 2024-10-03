@@ -27,9 +27,8 @@ const SidebarItem = ({
   label: string;
   link: string;
   variant?: "default" | "active";
-  channelNotifications?: Notification[] | null;
+  channelNotifications: any;
 }) => {
-  console.log(channelNotifications, "this is notification comming");
   return (
     <Button variant="ghost" className={cn(sidebarVariants({ variant }))}>
       <Link
@@ -40,13 +39,17 @@ const SidebarItem = ({
           {icon}
           <h3 className="text-md font-medium tracking-normal">{label}</h3>
         </div>
-        {channelNotifications && channelNotifications?.length > 0 && (
-          <Badge className="bg-accent/30 text-accent">
-            {channelNotifications?.length > 9
-              ? `9+`
-              : channelNotifications?.length}
-          </Badge>
-        )}
+        {channelNotifications &&
+          channelNotifications?.length > 0 &&
+          channelNotifications.some(
+            (notification: any) => !notification.read
+          ) && (
+            <Badge className="bg-accent/30 text-accent">
+              {channelNotifications?.length > 9
+                ? `9+`
+                : channelNotifications?.length}
+            </Badge>
+          )}
       </Link>
     </Button>
   );

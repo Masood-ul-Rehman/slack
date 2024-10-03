@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
@@ -13,9 +13,9 @@ import { useGetChannelsByWorkspaceId } from "@/features/workspaces/api/channels/
 import UseGetWorkspaceId from "@/features/workspaces/hooks/use-workspace-Id";
 import { useOpenCreateChannelModal } from "@/features/workspaces/store/use-open-crete-channel-modal";
 import { useGetUserNotifications } from "@/features/notifications/api/get-user-notifications";
-import { useCurrentUser } from "@/features/auth/api/use-current-user";
 import { useGetCurrentMember } from "@/features/workspaces/api/members/use-current-member";
 import { Id } from "@/convex/_generated/dataModel";
+import { useReadNotification } from "@/features/notifications/api/use-read-notification";
 
 const Channels = () => {
   const { id, channelId } = useParams();
@@ -32,11 +32,13 @@ const Channels = () => {
     workspaceId,
     memberId: (user?.result as any)?._id as Id<"members">,
   });
+  const { mutate: readNotification } = useReadNotification();
   const channelNotifications = (id: string) => {
     return notifications?.filter(
-      (notification) => notification.channelId === id
+      (notification) => notification.channelId === id && !notification.read
     );
   };
+
   if (isLoading)
     return (
       <div className="flex justify-center items-center gap-4 h-24">

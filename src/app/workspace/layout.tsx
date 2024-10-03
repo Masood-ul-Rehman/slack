@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Loader } from "lucide-react";
+import { useRouter, useParams } from "next/navigation";
 import { Id } from "@/convex/_generated/dataModel";
 
 import {
@@ -16,16 +17,70 @@ import ThreadPanel from "./components/thread-pannel";
 import { usePanel } from "@/features/workspaces/hooks/use-panel";
 import useWorkspaceId from "@/features/workspaces/hooks/use-workspace-Id";
 import { useGetWorkspaceById } from "@/features/workspaces/api/use-get-workspace-by-id";
-import { useRouter } from "next/navigation";
+import { useGetCurrentMember } from "@/features/workspaces/api/members/use-current-member";
+import { useGetUserNotifications } from "@/features/notifications/api/get-user-notifications";
+import { useReadNotification } from "@/features/notifications/api/use-read-notification";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
+  const { channelId, memberId } = useParams();
+  const [prevLength, setPrevLength] = useState(0);
   const { workspaceId } = useWorkspaceId();
   const { parentMessageId, onCloseMessage } = usePanel();
+  const { data: user } = useGetCurrentMember({
+    workspaceId: workspaceId as string,
+  });
+  const { data: notifications } = useGetUserNotifications({
+    workspaceId,
+    memberId: (user?.result as any)?._id as Id<"members">,
+  });
   const showPanel = !!parentMessageId;
   const { data: workspace, isLoading: workspaceLoading } = useGetWorkspaceById({
     id: workspaceId,
   });
+  const { mutate: readNotification } = useReadNotification();
+
+  useEffect(() => {
+    const unreadNotifications = notifications?.filter(
+      (notification) => !notification.read
+    );
+    setPrevLength(unreadNotifications?.length || 0);
+    if (prevLength < (unreadNotifications?.length || 0)) {
+      const audio = new Audio("/notification.mp3");
+      audio.play();
+    }
+    setPrevLength(unreadNotifications?.length || 0);
+  }, [notifications, prevLength]);
+
+  useEffect(() => {
+    if (channelId) {
+      const unreadNotifications = notifications?.filter(
+        (notification) =>
+          notification.channelId === channelId && !notification.read
+      );
+      if (unreadNotifications && unreadNotifications.length > 0) {
+        for (const notification of unreadNotifications) {
+          readNotification({
+            notificationId: notification._id as Id<"notifications">,
+          });
+        }
+      }
+    }
+    if (memberId) {
+      const unreadNotifications = notifications?.filter(
+        (notification) =>
+          notification.notificationFrom === memberId && !notification.read
+      );
+      if (unreadNotifications && unreadNotifications.length > 0) {
+        for (const notification of unreadNotifications) {
+          readNotification({
+            notificationId: notification._id as Id<"notifications">,
+          });
+        }
+      }
+    }
+  }, [router, channelId, memberId, notifications, readNotification, user]);
+
   if (workspaceLoading)
     return (
       <div className="w-[100vw] h-[100vh] flex flex-col gap-4 justify-center items-center bg-[#f4ede480]">

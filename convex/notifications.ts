@@ -68,10 +68,13 @@ export const getNotifications = query({
 export const readNotification = mutation({
   args: {
     notificationId: v.id("notifications"),
-    memberId: v.id("members"),
   },
   handler: async ({ db }, args) => {
     const notification = await db.get(args.notificationId);
     if (!notification) throw new Error("Notification not found");
+    const updatedNotification = await db.patch(args.notificationId, {
+      read: true,
+    });
+    return updatedNotification;
   },
 });
