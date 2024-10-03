@@ -18,7 +18,6 @@ const MessageList = ({
   loadMore,
   isLoadingMore,
   canLoadMore,
-  memberId,
 }: MessageListProps) => {
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const formatDateLabel = (date: string) => {
@@ -113,9 +112,9 @@ const MessageList = ({
                   isEditing={isEditing === message._id}
                   setEditingId={(id) => setIsEditing(id)}
                   isCompact={isCompact}
-                  threadCount={messages.threadCount}
-                  threadImage={messages.threadImage}
-                  threadTimeStamp={messages.threadTimeStamp}
+                  threadCount={message.threadCount}
+                  threadImage={message.threadImage}
+                  threadTimeStamp={message.threadTimeStamp}
                   variant={variant}
                 />
               );

@@ -8,6 +8,7 @@ import WorkspaceAvatar from "./workspace-avater";
 import Thumbnail from "./thumbnail";
 import MessageToolbar from "./message-toolbar";
 import { Reactions } from "./reactions";
+import ThreadBar from "./thread-bar";
 import { useDeleteMessage } from "@/features/workspaces/api/messages/use-delete-message";
 import { useEditMessage } from "@/features/workspaces/api/messages/use-edit-message";
 import { useCreateReaction } from "@/features/workspaces/api/messages/use-create-reaction";
@@ -20,7 +21,6 @@ const Editor = dynamic(() => import("./editor"), { ssr: false });
 
 const Message = ({
   id,
-  memeberId,
   authorImage,
   authorName = "Member",
   isAuthor,
@@ -34,7 +34,6 @@ const Message = ({
   threadCount,
   threadImage,
   threadTimeStamp,
-  channelCreatedAt,
   variant,
   isCompact,
 }: MessageProps) => {
@@ -101,6 +100,12 @@ const Message = ({
                   <p className="text-xs text-muted-foreground">(edited)</p>
                 ) : null}
                 <Reactions data={reaction} onChange={handleReaction} />
+                <ThreadBar
+                  count={threadCount!}
+                  image={threadImage!}
+                  timeStamp={threadTimeStamp as any}
+                  onClick={() => onOpenMessage(id)}
+                />
               </div>
             </div>
           )}
@@ -155,6 +160,12 @@ const Message = ({
               ) : null}
               {image && <Thumbnail url={image} />}
               <Reactions data={reaction} onChange={handleReaction} />
+              <ThreadBar
+                count={threadCount!}
+                image={threadImage!}
+                timeStamp={threadTimeStamp as any}
+                onClick={() => onOpenMessage(id)}
+              />
             </div>
           )}
         </div>
