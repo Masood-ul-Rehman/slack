@@ -7,7 +7,6 @@ interface ChannelHeroProps {
 }
 
 const ChannelHero = ({ channelName, channelCreatedAt }: ChannelHeroProps) => {
-  console.log(channelName, channelCreatedAt);
   return (
     <div className="mt-[88px] mx-5 mb-4">
       <p className="text-2xl font-bold "># {channelName}</p>

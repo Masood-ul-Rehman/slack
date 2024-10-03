@@ -33,7 +33,7 @@ export const getChannels = query({
       return { success: false, result: null, error: "No channels found" };
 
     const isMember = channels.some((channel) =>
-      channel.members.includes(userId)
+      channel.members.includes(member._id)
     );
     if (!isMember)
       return {
@@ -75,8 +75,8 @@ export const createChannel = mutation({
       workspaceId: args.workspaceId,
       members:
         args.status == "private"
-          ? [member.userId]
-          : members.map((member) => member.userId),
+          ? [member._id]
+          : members.map((member) => member._id),
       type: "text",
       status: args.status,
       channelOwner: workspaceOwner?.userId || member.userId,

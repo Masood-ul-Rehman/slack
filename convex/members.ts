@@ -49,6 +49,9 @@ export const getCurrentMember = query({
       )
       .filter((q) => q.eq(q.field("userId"), userId))
       .first();
+    if (!member)
+      return { success: false, result: [], error: "Member not found" };
+
     return { success: true, result: member, error: "" };
   },
 });

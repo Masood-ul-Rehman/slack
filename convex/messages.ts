@@ -4,6 +4,7 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { Id } from "./_generated/dataModel";
 import { paginationOptsValidator } from "convex/server";
 import { Doc } from "./_generated/dataModel";
+import { createNotification } from "./notifications";
 
 const populateMember = async (ctx: QueryCtx, memberId: Id<"members">) => {
   return await ctx.db.get(memberId);
@@ -61,13 +62,15 @@ export const createMessage = mutation({
     image: v.optional(v.string()),
     parentMessageId: v.optional(v.id("messages")),
     conversationId: v.optional(v.id("conversations")),
+    receiverId: v.optional(v.id("members")),
   },
   handler: async (ctx, args) => {
     const { workspaceId, channelId, body, image } = args;
     const userId = await getAuthUserId(ctx);
     if (!userId) return { success: false, result: null, error: "Unauthorized" };
-    const member = await getMember(ctx, { workspaceId, userId });
-    if (!member) return { success: false, result: null, error: "Unauthorized" };
+    const currentMember = await getMember(ctx, { workspaceId, userId });
+    if (!currentMember)
+      return { success: false, result: null, error: "Unauthorized" };
 
     let _conversationId = args.conversationId;
 
@@ -87,12 +90,44 @@ export const createMessage = mutation({
       channelId,
       conversationId: _conversationId,
       parentMessageId: args.parentMessageId ?? undefined,
-      memberId: member._id,
+      memberId: currentMember._id,
       body,
       image,
       userId,
       updatedAt: Date.now(),
     });
+    const sendNotification = async (notiTo: Id<"members">) => {
+      await createNotification(ctx, {
+        workspaceId,
+        notificationTo: notiTo,
+        notificationFrom: currentMember._id,
+        channelId,
+        conversationId: _conversationId,
+        messageId,
+        type: "new_message",
+        data: JSON.stringify({
+          messageId,
+        }),
+        createdAt: Date.now(),
+      });
+    };
+    if (channelId) {
+      const channel = await ctx.db
+        .query("channels")
+        .withIndex("by_workspace_id_channel_id", (q) =>
+          q.eq("workspaceId", workspaceId).eq("channelId", channelId)
+        )
+        .first();
+      channel?.members.map((member) => {
+        if (member !== currentMember._id) {
+          sendNotification(member);
+        }
+      });
+    }
+    if (_conversationId && args.receiverId && !channelId) {
+      sendNotification(args.receiverId);
+    }
+
     return { success: true, result: messageId, error: null };
   },
 });
@@ -109,7 +144,6 @@ export const get = query({
     const { channelId, paginationOpts, parentMessageId } = args;
     let _conversationId = args.conversationId;
     if (!args.conversationId && !args.channelId && args.parentMessageId) {
-      console.log("parentMessageId", args.parentMessageId);
       const parentMessage = await ctx.db.get(args.parentMessageId);
       if (!parentMessage) {
         throw new Error("Parent message not found");

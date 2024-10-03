@@ -21,7 +21,7 @@ export const create = mutation({
       userId: userId,
       joinCode: generateJoinCode(),
     });
-    await ctx.db.insert("members", {
+    const member = await ctx.db.insert("members", {
       workspaceId: Id,
       userId: userId,
       role: "owner",
@@ -30,7 +30,7 @@ export const create = mutation({
       workspaceId: Id,
       name: "general",
       type: "text",
-      members: [userId],
+      members: [member],
       status: "public",
       channelOwner: userId,
       channelId: generateChannelId(),
@@ -172,13 +172,15 @@ export const join = mutation({
         q.eq("workspaceId", args.workspaceId).eq("userId", userId)
       )
       .unique();
-    if (member)
+    if (member) {
       return {
         success: false,
         result: null,
         error: "You are already a member of this workspace",
       };
-    await ctx.db.insert("members", {
+    }
+
+    const newMember = await ctx.db.insert("members", {
       workspaceId: args.workspaceId,
       userId: userId,
       role: "member",
@@ -191,7 +193,7 @@ export const join = mutation({
       .collect();
     for (const channel of channels) {
       await ctx.db.patch(channel._id, {
-        members: [...channel.members, userId],
+        members: [...channel.members, newMember],
       });
     }
     return { success: true, result: null, error: "" };

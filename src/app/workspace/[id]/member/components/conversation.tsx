@@ -5,7 +5,6 @@ import { Id } from "@/convex/_generated/dataModel";
 import MessageList from "@/components/message-list";
 import ChatInput from "@/components/chat-input";
 
-import { useGetMemberById } from "@/features/workspaces/api/members/use-get-member-by-id";
 import { useGetMessages } from "@/features/workspaces/api/messages/use-get-messages";
 
 const Conversation = ({
@@ -33,7 +32,11 @@ const Conversation = ({
         isLoadingMore={status === "LoadingFirstPage" ? true : false}
         canLoadMore={status === "CanLoadMore" ? true : false}
       />
-      <ChatInput variant="create" conversationId={conversationId} />
+      <ChatInput
+        variant="create"
+        conversationId={conversationId}
+        receiverId={memberId as Id<"members">}
+      />
     </div>
   );
 };

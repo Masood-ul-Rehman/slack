@@ -24,7 +24,7 @@ const schema = defineSchema({
     channelId: v.string(),
     name: v.string(),
     type: v.union(v.literal("text"), v.literal("voice")),
-    members: v.array(v.id("users")),
+    members: v.array(v.id("members")),
     status: v.union(v.literal("public"), v.literal("private")),
     channelOwner: v.id("users"),
   })
@@ -71,6 +71,30 @@ const schema = defineSchema({
     .index("by_workspace_id", ["workspaceId"])
     .index("by_message_id", ["messageId"])
     .index("by_member_id", ["memberId"]),
+  notifications: defineTable({
+    notificationFrom: v.id("members"),
+    notificationTo: v.id("members"),
+    workspaceId: v.string(),
+    channelId: v.optional(v.string()),
+    conversationId: v.optional(v.id("conversations")),
+    messageId: v.optional(v.id("messages")),
+    read: v.boolean(),
+    type: v.union(
+      v.literal("message_reaction"),
+      v.literal("new_message"),
+      v.literal("invited_to_workspace"),
+      v.literal("added_to_channel")
+    ),
+    data: v.string(),
+    createdAt: v.number(),
+  })
+    .index("by_workspace_id", ["workspaceId"])
+    .index("by_member_id", ["notificationTo"])
+    .index("by_type", ["type"])
+    .index("by_workspace_id_notification_to", [
+      "workspaceId",
+      "notificationTo",
+    ]),
 });
 
 export default schema;

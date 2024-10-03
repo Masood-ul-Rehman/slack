@@ -14,13 +14,14 @@ const ChatInput = ({
   variant,
   parentMessageId,
   conversationId,
+  receiverId,
 }: {
   placeholder?: string;
   variant: "create" | "edit";
   parentMessageId?: Id<"messages"> | null;
   conversationId?: Id<"conversations"> | null;
+  receiverId?: Id<"members"> | null;
 }) => {
-  console.log(conversationId, "conversationId");
   const [editorKey, setEditorKey] = useState(0);
   const [pending, setPending] = useState(false);
   const { mutate } = useCreateMessage();
@@ -52,6 +53,7 @@ const ChatInput = ({
           image: storageLink,
           parentMessageId: parentMessageId ?? undefined,
           conversationId: conversationId ?? undefined,
+          receiverId: receiverId ?? undefined,
         },
         {
           onError(error) {
